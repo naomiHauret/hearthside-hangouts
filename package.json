@@ -1,5 +1,5 @@
 {
-  "name": "next-expo-solito-monorepo",
+  "name": "hearthside-hangouts",
   "private": true,
   "workspaces": [
     "apps/*",

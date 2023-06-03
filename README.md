@@ -1,3 +1,13 @@
+# Hearthside Hangouts
+
+Online audio bookclubs.
+
+- Create your club
+- Define a book
+- Define reading and discussion milestones
+- Discuss with fellow readers
+
+---
 # Tamagui + Solito + Next + Expo Monorepo
 
 ```sh
@@ -6,7 +16,7 @@ npm create tamagui
 
 ## 🔦 About
 
-This monorepo is a starter for an Expo + Next.js + Tamagui + Solito app.
+This monorepo was bootstrapped with `npm create tamagui`, a universal app (mobile + web) built with Expo + Next.js + Tamagui + Solito app.
 
 Many thanks to [@FernandoTheRojo](https://twitter.com/fernandotherojo) for the Solito starter monorepo which this was forked from. Check out his [talk about using expo + next together at Next.js Conf 2021](https://www.youtube.com/watch?v=0lnbdRweJtA).
 
