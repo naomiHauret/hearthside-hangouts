@@ -8,6 +8,7 @@
   ],
   "dependencies": {
     "@my/ui": "*",
+    "@polybase/client": "^0.6.1",
     "@tamagui/animations-react-native": "latest",
     "@tamagui/colors": "latest",
     "@tamagui/font-inter": "latest",
@@ -15,10 +16,13 @@
     "@tamagui/shorthands": "latest",
     "@tamagui/themes": "latest",
     "burnt": "^0.10.0",
+    "ethers": "5.7.1",
     "expo-constants": "^14.2.1",
     "expo-linking": "^4.0.1",
-    "react-native-safe-area-context": "^4.5.2",
-    "solito": "^3.0.0"
+    "react-hook-form": "^7.44.3",
+    "solito": "^3.0.0",
+    "tamagui-react-hook-form": "^0.4.0",
+    "zustand": "^4.3.8"
   },
   "devDependencies": {
     "@types/react": "^18.0.27",
