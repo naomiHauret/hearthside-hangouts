@@ -4,7 +4,7 @@ import '@tamagui/font-inter/css/700.css'
 import 'raf/polyfill'
 
 import { NextThemeProvider, useRootTheme } from '@tamagui/next-theme'
-import { Provider } from 'app/provider'
+import { Provider as ProviderUniversalUi } from 'app/provider'
 import Head from 'next/head'
 import React from 'react'
 import type { SolitoAppProps } from 'solito'
@@ -37,9 +37,9 @@ function ThemeProvider({ children }: { children: React.ReactNode }) {
         setTheme(next as any)
       }}
     >
-      <Provider disableRootThemeClass defaultTheme={theme}>
+      <ProviderUniversalUi disableRootThemeClass defaultTheme={theme}>
         {children}
-      </Provider>
+      </ProviderUniversalUi>
     </NextThemeProvider>
   )
 }
