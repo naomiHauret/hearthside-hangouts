@@ -1,14 +1,94 @@
-# Hearthside Hangouts
+# 🏕️ 🔥 Hearthside Hangouts
 
-Online audio bookclubs.
+Online (audio 🔊) bookclubs.
 
-- Create your club
-- Define a book
-- Define reading and discussion milestones
-- Discuss with fellow readers
+- 🏕️ Create your club
+- 📚 Set the reading list of your club
+- 📅 Plan out reading and discussion milestones
+- 🗣️ Discuss with fellow readers  
+
+## 📱🧑‍💻 Get started with Hearthside Hangouts mobile app (Expo app, dev mode)
+> **Pre-requisites:** 
+> * have `yarn` installed on your machine ;
+> * have the Expo Go app installed on your phone ; ([Learn more from on Expo website](https://expo.dev/client))
+> * have an EAS (Expo Application Services) account ;  ([Sign up here](https://expo.dev/signup))
+> * have `eas-cli` installed on your machine ; ([eas-cli Github](https://github.com/expo/eas-cli))
+
+- Install dependencies: `yarn`
+- In `apps/expo`, run `eas project:init` and initialize a project
+- If alls goes well in the previous step, you should see this in your terminal :
+```
+✔ Would you like to create a project for @<your-eas-account-name>/hearthsidehangouts? … yes
+✔ Created @<your-eas-account-name>/hearthsidehangouts
+✔ Project successfully linked (ID: <id-of-your-newly-created-project>) (modified app.json)
+```
+- Check `apps/expo/app.json` ; the `"projectId"` field should have the ID the `eas-cli` printed in the previous step as its value ; **if not, redo the previous step.**
+- Still in `apps/expo`, create a `.env.local` file (copy/paste the content of `.env.dist`)
+- Still in `apps/expo`, run the following command `eas secret:push --scope project --env-file .env.local` ;
+
+> Make sure to run `eas secret:push --scope project --env-file .env.local` **every time you change your .env.local file !**
+- Still in `apps/expo`, verify that your secret environment variables were created by running `eas secret:list` ; your terminal should print something like this : 
+```
+eas secret:list
+
+Secrets for this account and project:
+ID          <some-id-abc-def>
+Name        MAGIC_KEY
+Scope       project
+Type        STRING
+Updated at  <some-date>
+
+———
+
+ID           <some-id-xyz-lmn>
+Name        POLYBASE_DEFAULT_NAMESPACE
+Scope       project
+Type        STRING
+Updated at  <some-date>
+```
+- If you followed all the previous steps properly, you should be good to go ! Go back to the root of the project
+- To run expo locally in dev mode, run `yarn native`
+- Your terminal should print something like this :
+```
+Starting Metro Bundler
+Tunnel connected.
+Tunnel ready.
+█▀▀▀▀▀█ ▄ █ ▀ ▄▄▀ █▀▀▀▀▀█
+█ ███ █ ▄▄▄ █▄██  █ ███ █
+█ ▀▀▀ █ ▄█ ▄▄▀▀▄▄ █ ▀▀▀ █
+▀▀▀▀▀▀▀ ▀▄█▄▀ ▀▄█ ▀▀▀▀▀▀▀
+██▀█▀ ▀▀▀▀▄▀▄▀█ ▄▀ █ ▀▄▀ 
+▄ ▀  █▀▄▄ ▀ ▄  ▀█▀▄ ▀▀ ██
+█▀ █▄ ▀▀██▀ ▀█▀ ▄▀▀█▀▀█▀▀
+█ ██▀█▀██▀▄█▀▀█▀ ▀███▀ ▀█
+▀   ▀ ▀▀▄██▀█▀ ▀█▀▀▀█▀█  
+█▀▀▀▀▀█ ▀▀▀ █   █ ▀ █▄▀██
+█ ███ █ █▄█▄ ▀▀██▀█▀██▀▄▄
+█ ▀▀▀ █ █   █ ▄▄▄ ▄█▄▀  █
+▀▀▀▀▀▀▀ ▀ ▀  ▀▀   ▀▀  ▀▀▀
+
+› Choose an app to open your project at http://<random-string>.<your-eas-account-name>.19000.exp.direct/_expo/loading
+› Metro waiting on exp://<random-string>.<your-eas-account-name>.19000.exp.direct
+› Scan the QR code above with Expo Go (Android) or the Camera app (iOS)
+
+› Press a │ open Android
+› Press w │ open web
+
+› Press j │ open debugger
+› Press r │ reload app
+› Press m │ toggle menu
+
+› Press ? │ show all commands
+
+Logs for your project will appear below. Press Ctrl+C to exit.
+```
+- In your phone open the Expo go app
+- In the Expo Go app, scan the QR code from the console or write the URL
+- Enjoy !
 
 ---
-# Tamagui + Solito + Next + Expo Monorepo
+> This project was bootstrapped using the tamagui universal app starter.
+#  Tamagui + Solito + Next + Expo Monorepo
 
 ```sh
 npm create tamagui
@@ -36,12 +116,14 @@ The main apps are:
 - `next` (web)
 
 - `packages` shared packages across apps
-  - `ui` includes your custom UI kit that will be optimized by Tamagui
-  - `app` you'll be importing most files from `app/`
+  - `ui` includes custom UI kit that will be optimized by Tamagui
+  - `app` most files will be importedf from `app/`
     - `features` (don't use a `screens` folder. organize by feature.)
+    - `helpers` helper functions that are used across different parts of the applications (provide common functionality or perform specific tasks that can be reused throughout the codebase)
+    - `hooks`custom hooks that are used across different parts of the applications
     - `provider` (all the providers that wrap the app, and some no-ops for Web.)
 
-You can add other folders inside of `packages/` if you know what you're doing and have a good reason to.
+Adding other folders inside of `packages/` is possible (if you  have a good reason to.)
 
 ## 🏁 Start the app
 
