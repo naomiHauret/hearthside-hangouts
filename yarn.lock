@@ -5660,6 +5660,32 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-core@npm:4.29.11":
+  version: 4.29.11
+  resolution: "@tanstack/query-core@npm:4.29.11"
+  checksum: 2a17223f34e99e17d564a15206668eb79324da72e630a47cf41690f92fb091a8669bdc89e9ab1b0d8f0e3e8f579529cfb0aa6f10b4fc58ea81cc7e5caede9229
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query@npm:^4.29.12":
+  version: 4.29.12
+  resolution: "@tanstack/react-query@npm:4.29.12"
+  dependencies:
+    "@tanstack/query-core": 4.29.11
+    use-sync-external-store: ^1.2.0
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react-native: "*"
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+    react-native:
+      optional: true
+  checksum: aea231af648688c5eafdbbda0667034221cca8b77e00690ab54950b7cc0296d14646931aee44fc5f18d5ce4d683b5d234b053eed5c0a5c340bbbacdab873a70b
+  languageName: node
+  linkType: hard
+
 "@tootallnate/once@npm:1":
   version: 1.1.2
   resolution: "@tootallnate/once@npm:1.1.2"
@@ -6697,6 +6723,7 @@ __metadata:
     "@tamagui/lucide-icons": latest
     "@tamagui/shorthands": latest
     "@tamagui/themes": latest
+    "@tanstack/react-query": ^4.29.12
     "@types/react": ^18.0.27
     "@types/react-native": ^0.71.3
     burnt: ^0.10.0
@@ -9198,6 +9225,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dotenv@npm:^16.1.4":
+  version: 16.1.4
+  resolution: "dotenv@npm:16.1.4"
+  checksum: c1b2e13df4d374a6a29e134c56c7b040ba20500677fe8b9939ea654f3b3badb9aaa0b172e40e4dfa1233a4177dbb8fb79d84cc79a50ac9c9641fe2ad98c14876
+  languageName: node
+  linkType: hard
+
 "duplexer3@npm:^0.1.4":
   version: 0.1.5
   resolution: "duplexer3@npm:0.1.5"
@@ -10628,49 +10662,6 @@ __metadata:
   checksum: 1781d422e7edfa20009e2abda673cadb040a6037f0bd30fcd7357304f4f0c284afd420d7622722ca4a016f39b6d091841ab57b401c1f7e2e5131ac65b9f14fa1
   languageName: node
   linkType: hard
-
-"expo-app@workspace:apps/expo":
-  version: 0.0.0-use.local
-  resolution: "expo-app@workspace:apps/expo"
-  dependencies:
-    "@babel/core": ^7.17.9
-    "@babel/runtime": ^7.18.9
-    "@ethersproject/shims": ^5.7.0
-    "@expo/metro-config": ^0.3.21
-    "@magic-ext/react-native-expo-oauth": ^12.4.0
-    "@magic-sdk/react-native-expo": ^18.4.0
-    "@my/ui": "*"
-    "@react-navigation/native": ^6.1.6
-    "@tamagui/babel-plugin": latest
-    "@types/react-native": ^0.71.3
-    app: "*"
-    babel-plugin-module-resolver: ^4.1.0
-    babel-plugin-transform-inline-environment-variables: ^0.4.4
-    burnt: ^0.10.0
-    expo: ^48.0.7
-    expo-constants: ^14.2.1
-    expo-dev-client: ^2.1.5
-    expo-font: ^11.1.1
-    expo-linear-gradient: ^12.1.2
-    expo-linking: ^4.0.1
-    expo-router: ^1.4.3
-    expo-splash-screen: ^0.18.1
-    expo-status-bar: ^1.4.4
-    expo-updates: ^0.16.3
-    metro-minify-terser: ^0.74.1
-    react: ^18.2.0
-    react-dom: ^18.2.0
-    react-native: ^0.71.4
-    react-native-gesture-handler: ^2.9.0
-    react-native-safe-area-context: 4.5.0
-    react-native-screens: ^3.20.0
-    react-native-svg: 13.4.0
-    react-native-web: ^0.18.12
-    react-native-webview: 11.26.0
-    text-encoding-polyfill: ^0.6.7
-    typescript: ^4.7.4
-  languageName: unknown
-  linkType: soft
 
 "expo-application@npm:^5.0.1":
   version: 5.2.0
@@ -12331,6 +12322,50 @@ __metadata:
     node-gyp: ^9.3.1
     prettier: ^2.7.1
     turbo: ^1.8.3
+    typescript: ^4.7.4
+  languageName: unknown
+  linkType: soft
+
+"hearthsidehangouts@workspace:apps/expo":
+  version: 0.0.0-use.local
+  resolution: "hearthsidehangouts@workspace:apps/expo"
+  dependencies:
+    "@babel/core": ^7.17.9
+    "@babel/runtime": ^7.18.9
+    "@ethersproject/shims": ^5.7.0
+    "@expo/metro-config": ^0.3.21
+    "@magic-ext/react-native-expo-oauth": ^12.4.0
+    "@magic-sdk/react-native-expo": ^18.4.0
+    "@my/ui": "*"
+    "@react-navigation/native": ^6.1.6
+    "@tamagui/babel-plugin": latest
+    "@types/react-native": ^0.71.3
+    app: "*"
+    babel-plugin-module-resolver: ^4.1.0
+    babel-plugin-transform-inline-environment-variables: ^0.4.4
+    burnt: ^0.10.0
+    dotenv: ^16.1.4
+    expo: ^48.0.7
+    expo-constants: ^14.2.1
+    expo-dev-client: ^2.1.5
+    expo-font: ^11.1.1
+    expo-linear-gradient: ^12.1.2
+    expo-linking: ^4.0.1
+    expo-router: ^1.4.3
+    expo-splash-screen: ^0.18.1
+    expo-status-bar: ^1.4.4
+    expo-updates: ^0.16.3
+    metro-minify-terser: ^0.74.1
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    react-native: ^0.71.4
+    react-native-gesture-handler: ^2.9.0
+    react-native-safe-area-context: 4.5.0
+    react-native-screens: ^3.20.0
+    react-native-svg: 13.4.0
+    react-native-web: ^0.18.12
+    react-native-webview: 11.26.0
+    text-encoding-polyfill: ^0.6.7
     typescript: ^4.7.4
   languageName: unknown
   linkType: soft
@@ -20635,7 +20670,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-sync-external-store@npm:1.2.0, use-sync-external-store@npm:^1.0.0":
+"use-sync-external-store@npm:1.2.0, use-sync-external-store@npm:^1.0.0, use-sync-external-store@npm:^1.2.0":
   version: 1.2.0
   resolution: "use-sync-external-store@npm:1.2.0"
   peerDependencies:

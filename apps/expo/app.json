@@ -15,7 +15,9 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.hearthsidehangouts.app"
@@ -32,8 +34,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "[your_project_id]"
+        "projectId": "11e2c5bc-21d0-4201-907d-1eae3a6c746a"
       }
-    }
+    },
+    "owner": "naomihauret"
   }
 }

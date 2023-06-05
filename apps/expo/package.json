@@ -1,5 +1,5 @@
 {
-  "name": "expo-app",
+  "name": "hearthsidehangouts",
   "version": "1.0.0",
   "main": "index.js",
   "private": true,
@@ -20,6 +20,7 @@
     "app": "*",
     "babel-plugin-module-resolver": "^4.1.0",
     "burnt": "^0.10.0",
+    "dotenv": "^16.1.4",
     "expo": "^48.0.7",
     "expo-constants": "^14.2.1",
     "expo-dev-client": "^2.1.5",
