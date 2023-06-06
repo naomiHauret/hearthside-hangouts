@@ -32,11 +32,11 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "owner": "naomihauret",
     "extra": {
       "eas": {
         "projectId": "11e2c5bc-21d0-4201-907d-1eae3a6c746a"
       }
-    },
-    "owner": "naomihauret"
+    }
   }
 }

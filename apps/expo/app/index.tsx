@@ -1,15 +1,10 @@
 import { HomeScreen } from 'app/features/home/screen'
-import { Stack } from 'expo-router'
+import { ScreenScrollView } from '../components/ScreenScrollview'
 
 export default function Screen() {
   return (
-    <>
-      <Stack.Screen
-        options={{
-          title: 'Home',
-        }}
-      />
+    <ScreenScrollView useWindowScrolling={true}>
       <HomeScreen />
-    </>
+    </ScreenScrollView>
   )
 }

@@ -1,4 +1,4 @@
-import { Polybase } from "@polybase/client";
+import { Polybase } from '@polybase/client'
 
 /**
 * Initialize and returns a new Polybase database instance with the specified default namespace.
@@ -6,7 +6,7 @@ import { Polybase } from "@polybase/client";
   @returns {Polybase} - The created Polybase instance.
 */
 export function getDefaultDb(defaultNamespace: string): Polybase {
-    return new Polybase({defaultNamespace: `${defaultNamespace}`})
+  return new Polybase({ defaultNamespace: `${defaultNamespace}` })
 }
 
 export default getDefaultDb

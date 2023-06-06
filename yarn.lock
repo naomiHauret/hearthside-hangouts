@@ -3515,6 +3515,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@magic-ext/auth@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "@magic-ext/auth@npm:0.4.0"
+  checksum: 2e8995fa2693ca4e4028659e3eb9cce0164040520c5a05fd419f77d4ca7f610dbfc6da651b0bd355ddb0a927a1844acff69377f9555b4fbd29e84eb1aa01d142
+  languageName: node
+  linkType: hard
+
 "@magic-ext/react-native-expo-oauth@npm:^12.4.0":
   version: 12.4.0
   resolution: "@magic-ext/react-native-expo-oauth@npm:12.4.0"
@@ -12334,11 +12341,13 @@ __metadata:
     "@babel/runtime": ^7.18.9
     "@ethersproject/shims": ^5.7.0
     "@expo/metro-config": ^0.3.21
+    "@magic-ext/auth": ^0.4.0
     "@magic-ext/react-native-expo-oauth": ^12.4.0
     "@magic-sdk/react-native-expo": ^18.4.0
     "@my/ui": "*"
     "@react-navigation/native": ^6.1.6
     "@tamagui/babel-plugin": latest
+    "@tamagui/lucide-icons": latest
     "@types/react-native": ^0.71.3
     app: "*"
     babel-plugin-module-resolver: ^4.1.0

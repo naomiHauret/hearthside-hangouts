@@ -7,8 +7,12 @@ import { utils } from 'ethers'
  * @param {string} args.signature - The signature to be verified.
  * @returns {Promise<boolean>} - A promise that resolves to a boolean indicating whether the message was signed by this address.
  */
-export async function verifyMessage (args: { message: string, address: string, signature: string }): Promise<boolean>  {
-  const signerAddr = await utils.verifyMessage(args.message, args.signature);
-  if (signerAddr !== args.address) return false;  
-  return true;
+export async function verifyMessage(args: {
+  message: string
+  address: string
+  signature: string
+}): Promise<boolean> {
+  const signerAddr = await utils.verifyMessage(args.message, args.signature)
+  if (signerAddr !== args.address) return false
+  return true
 }
