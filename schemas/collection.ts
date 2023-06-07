@@ -127,7 +127,7 @@ collection UserProfile {
 
     function addNewReadingMaterial(material: ClubMaterial) { 
       if (ctx.publicKey != this.creatorPublicKey) {
-        error('Only the club creator can set the reading material.');
+        error('Only the club creator can set the material used by the club.');
       }
       this.materialList = materialList.push(material);
     }
@@ -139,13 +139,20 @@ collection UserProfile {
     id: string;
     club: Club;
     material: Media;
-    milestones: map<number, string>; // <milestone datetime epoch time, milestone title>
+    milestones: Milestone[];
     creatorPublicKey: PublicKey;
 
     constructor (id: string, material: Media, milestones:  Milestone[] ) {
       this.id = id;
       this.creatorPublicKey = ctx.publicKey;
       this.material = material;
+      this.milestones = milestones;
+    }
+
+    function setMilestones(milestones: Milestone[]) {
+      if (ctx.publicKey != this.creatorPublicKey) {
+        error('Only the club creator can configure the milestones.');
+      }
       this.milestones = milestones;
     }
 }
@@ -170,7 +177,4 @@ collection UserProfile {
       this.notes = notes;
     }
 }
-
-
-
 `
