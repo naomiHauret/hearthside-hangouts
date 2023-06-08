@@ -15,6 +15,9 @@ Online (audio 🔊) bookclubs.
 > - have the Expo Go app installed on your phone ; ([Learn more from on Expo website](https://expo.dev/client))
 > - have an EAS (Expo Application Services) account ; ([Sign up here](https://expo.dev/signup))
 > - have `eas-cli` installed on your machine ; ([eas-cli Github](https://github.com/expo/eas-cli))
+> - A Magic Auth API Key
+> - A Polybase db that follows the schema defined in `./schemas/collectionV1.ts`
+> - A Web3.Storage API Key
 
 - Install dependencies: `yarn`
 - In `apps/expo`, run `eas project:init` and initialize a project

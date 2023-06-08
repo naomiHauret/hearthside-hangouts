@@ -7,7 +7,7 @@ import SignInForm from './Form'
  */
 export function SignInScreen() {
   return (
-    <YStack f={1} flexGrow={1} jc="center" ai="center" p="$4" space>
+    <YStack flexGrow={1} jc="center" ai="center" p="$4" space>
       <YStack space="$4">
         <YStack space="$1">
           <H2 ta="center">🏕️</H2>

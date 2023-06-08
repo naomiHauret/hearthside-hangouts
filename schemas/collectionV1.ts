@@ -1,3 +1,12 @@
+/**
+ * This is a initial schema where the whole stack is powered by Polybase
+ * includes: 
+ * - profiles
+ * - media (aka books)
+ * - clubs
+ * - club material
+ * - milestones
+ */
 const polybaseSchema = `
 @public
 collection UserProfile {

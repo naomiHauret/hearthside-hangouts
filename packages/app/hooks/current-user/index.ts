@@ -1,21 +1,18 @@
 import type { MagicUserMetadata } from '@magic-sdk/types'
 import type { UseMutationResult, UseQueryResult } from '@tanstack/react-query'
-import type { providers } from 'ethers'
-import { Polybase } from '@polybase/client'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { create } from 'zustand'
-import { signMessage } from '../../helpers/wallet'
 import { useMagicWallet } from '../../provider/magic-wallet'
-import { usePolybase } from '../../provider/polybase'
 
 /**
- * zustand store to get/set the current user's information via Magic SDK
+ * zustand store to get/set the current user's auth/wallet information
  */
 const useCurrentUserStore = create<{
   userInfo: undefined | MagicUserMetadata
   setUserInfo: (newValue: undefined | MagicUserMetadata) => void
 }>((set) => ({
   userInfo: undefined,
+  profile: undefined,
   setUserInfo: (newValue: undefined | MagicUserMetadata) => set(() => ({ userInfo: newValue })),
 }))
 
@@ -41,11 +38,8 @@ export function useCurrentUser(): {
   queryCurrentUserInfo: UseQueryResult<MagicUserMetadata | undefined, unknown>
 } {
   const queryClient = useQueryClient()
-  const polybaseDbDefaultNamespace = usePolybase((s) => s.defaultNamespace)
-  const setPolybaseDb = usePolybase((s) => s.setDb)
   const magic = useMagicWallet((s) => s.magic)
   const redirectURI = useMagicWallet((s) => s.redirectURI)
-  const walletClient = useMagicWallet((s) => s.walletClient)
   const setUserInfo = useCurrentUserStore((state) => state.setUserInfo)
   const userInfo = useCurrentUserStore((state) => state.userInfo)
 
@@ -57,7 +51,8 @@ export function useCurrentUser(): {
       if (args.method === 'email') {
         await magic?.auth.loginWithEmailOTP({ email: args?.value as string })
       } else {
-        const p = await magic?.oauth?.loginWithPopup({
+        //@ts-ignore
+        await magic?.oauth?.loginWithPopup({
           provider: args.method,
           redirectURI: redirectURI /* must be string */,
         })
@@ -85,8 +80,6 @@ export function useCurrentUser(): {
         setUserInfo(undefined)
         queryClient.setQueryData(['is-connected'], () => false)
         queryClient.setQueryData(['current-user'], () => undefined)
-        const db = new Polybase({ defaultNamespace: polybaseDbDefaultNamespace })
-        setPolybaseDb(db)
       }
     },
   })
@@ -98,21 +91,6 @@ export function useCurrentUser(): {
     queryKey: ['is-connected'],
     queryFn: async () => await magic?.user.isLoggedIn(),
     refetchOnWindowFocus: true,
-    async onSuccess(data) {
-      const signer = (await walletClient?.getSigner(
-        userInfo?.publicAddress as string
-      )) as providers.JsonRpcSigner
-      const db = new Polybase({ defaultNamespace: polybaseDbDefaultNamespace })
-
-      db.signer(async (data: string) => {
-        const sig = await signMessage({
-          signer,
-          message: data,
-        })
-        return { h: 'eth-personal-sign', sig: sig.signature }
-      })
-      setPolybaseDb(db)
-    },
   })
 
   /**
