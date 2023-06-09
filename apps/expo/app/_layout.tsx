@@ -4,16 +4,17 @@ import {
   Provider as ProviderUniversalUI,
   ProviderMagicWallet,
   ProviderPolybase,
+  ProviderIPFS,
 } from 'app/provider'
 import { getWalletClient } from 'app/helpers'
-import { magic } from '../config'
 import { useFonts } from 'expo-font'
 import { usePathname, Tabs } from 'expo-router'
 import { useColorScheme } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { POLYBASE_DEFAULT_NAMESPACE, defaultPolybaseDb } from '../config/polybase'
+import { POLYBASE_DEFAULT_NAMESPACE, defaultPolybaseDb, magic, getIpfsClient } from '../config'
 import RootLevelNavigator from '../navigation/RootLevelNavigator'
 
+//@ts-ignore
 const walletClient = getWalletClient(magic)
 
 export default function HomeLayout() {
@@ -29,6 +30,7 @@ export default function HomeLayout() {
   return (
     <ProviderUniversalUI>
       <ThemeProvider value={scheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <ProviderIPFS web3StorageAccessToken={getIpfsClient()}>
         <ProviderPolybase defaultNamespace={POLYBASE_DEFAULT_NAMESPACE} db={defaultPolybaseDb}>
           <SafeAreaProvider>
             <magic.Relayer />
@@ -36,12 +38,14 @@ export default function HomeLayout() {
             <ProviderMagicWallet
               redirectURI="hearthsidehangouts://home"
               walletClient={walletClient}
+              // @ts-ignore
               magic={magic}
             >
               <RootLevelNavigator />
             </ProviderMagicWallet>
           </SafeAreaProvider>
         </ProviderPolybase>
+        </ProviderIPFS>
       </ThemeProvider>
     </ProviderUniversalUI>
   )

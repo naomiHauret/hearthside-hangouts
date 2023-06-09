@@ -1,14 +1,18 @@
-import { createConfigForm, defaultComponents, defaultHelpers } from 'tamagui-react-hook-form'
+import type { FileToUpload } from '../../hooks'
 import { Button, Spinner, Label, YStack, Avatar } from '@my/ui'
+import { createConfigForm, defaultComponents, defaultHelpers } from 'tamagui-react-hook-form'
 import { useFilepickerImage } from '../../hooks'
 
 const createForm = createConfigForm(defaultComponents, defaultHelpers)
 
-interface FormValues {
+interface FormDefaultValues {
   publicEthAddress: string
   displayName: string
   bio: string
-  avatarURI: any
+  avatarURI: string
+}
+export interface FormValues extends FormDefaultValues {
+  avatarFile?: FileToUpload | undefined | null
 }
 
 const Form = createForm<FormValues>()
@@ -21,7 +25,14 @@ interface FormProps {
 }
 export const FormProfile = (props: FormProps) => {
   const { labelTrigger, statusOnSubmit, defaultValues, onSubmit } = props
-  const avatarPicker = useFilepickerImage(defaultValues.avatarURI)
+
+  /**
+   * File picker for the user account avatar
+   */
+  const avatarPicker = useFilepickerImage({
+    defaultImageSrc: defaultValues.avatarURI, 
+    aspect: [1, 1]
+    })
 
   return (
     <YStack
@@ -33,7 +44,10 @@ export const FormProfile = (props: FormProps) => {
     >
       <Form
         defaultValues={defaultValues}
-        onSubmit={onSubmit}
+        onSubmit={(values) => onSubmit({
+          ...values,
+          avatarFile: avatarPicker?.imageFile
+        })}
         width="100%"
         marginHorizontal="auto"
         gap="$4"
@@ -49,6 +63,7 @@ export const FormProfile = (props: FormProps) => {
         </YStack>
         <YStack>
           <Label htmlFor="displayName">Your display name</Label>
+          {/* @ts-ignore */}
           <Form.Input
             type="text"
             placeholderColor="$color9"
@@ -61,6 +76,7 @@ export const FormProfile = (props: FormProps) => {
         </YStack>
         <YStack>
           <Label htmlFor="bio">Your bio</Label>
+          {/* @ts-ignore */}
           <Form.TextArea
             placeholderColor="$color9"
             borderWidth="$0.5"

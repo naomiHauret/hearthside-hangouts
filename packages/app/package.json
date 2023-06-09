@@ -24,6 +24,8 @@
     "react-hook-form": "^7.44.3",
     "solito": "^3.0.0",
     "tamagui-react-hook-form": "^0.4.0",
+    "uuidv4": "^6.2.13",
+    "web3.storage": "^4.5.4",
     "zustand": "^4.3.8"
   },
   "devDependencies": {

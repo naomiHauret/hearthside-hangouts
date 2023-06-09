@@ -1,12 +1,16 @@
 import type { CollectionRecordResponse, Polybase } from '@polybase/client'
 import type { providers } from 'ethers'
+import type { Filelike } from 'web3.storage'
+import type { FileToUpload } from '../upload-file'
+import type { FormValues } from '../../features/account/Form'
+import type { ImagePickerAsset } from 'expo-image-picker'
 import { UseMutationResult, UseQueryResult, useQueryClient } from '@tanstack/react-query'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { usePolybase } from '../../provider/polybase'
-import { isAddress } from 'ethers/lib/utils'
-import { useMagicWallet } from 'app/provider'
 import { signMessage } from 'app/helpers'
-
+import { useMagicWallet } from 'app/provider'
+import { isAddress } from 'ethers/lib/utils'
+import { usePolybase } from '../../provider/polybase'
+import {  useUploadFile } from '../upload-file'
 /**
  * Represents the base data of a user profile
  */
@@ -50,6 +54,7 @@ export function useUserProfile(userEthereumAddress?: string | null): {
     const queryClient = useQueryClient()
     const polybaseDb = usePolybase((s) => s.db) as Polybase
     const walletClient = useMagicWallet((s) => s.walletClient)
+    const { uploadFile} = useUploadFile()
 
     /**
      * Query ; fetches a user profile data from Polybase for a given <id> (our id here is a ethereum address)
@@ -69,16 +74,22 @@ export function useUserProfile(userEthereumAddress?: string | null): {
        enabled: !isAddress(`${userEthereumAddress}`) || !polybaseDb ? false : true
     })
 
+    async function handleAvatar(args:{ originalURI: string, fileToUpload?: FileToUpload | null}) {
+      let avatarURI = args?.originalURI
+      let fileToUpload = args?.fileToUpload
+
+      if(fileToUpload?.uri) {
+        const cid = await uploadFile({...fileToUpload})
+        avatarURI = cid
+      }
+      return avatarURI
+    }
+
     /**
      * Mutation ; creates a user profile on Polybase
      */
-    const mutationCreateUserProfile = useMutation(async function(values: {
-        publicEthAddress: string,
-        displayName: string,
-        bio: string, 
-        avatarURI: string
-    }): Promise<CollectionRecordResponse<any, UserProfile>> {
-
+    const mutationCreateUserProfile = useMutation(async function(values: FormValues): Promise<CollectionRecordResponse<any, UserProfile>> {
+        const avatarURI = await handleAvatar({ originalURI: values?.avatarURI, fileToUpload: values?.avatarFile })      
         // Grab the signer
         const signer = (await walletClient?.getSigner(
             values.publicEthAddress
@@ -100,25 +111,29 @@ export function useUserProfile(userEthereumAddress?: string | null): {
             values.publicEthAddress, 
             values.displayName,
             values.bio, 
-            values.avatarURI,
+            avatarURI,
          ]);
     }, {
         onSuccess(data, variables, context) {
             queryClient.setQueryData(['profile', variables.publicEthAddress], () => ({
                 ...data.data
             }))
+
+            queryClient.setQueryData(['profile', variables.publicEthAddress], (oldData: any) => ({
+              ...oldData,
+              displayName: data.data.displayName,
+              bio: data.data.bio, 
+              avatarURI: data.data.avatarURI
+          }))
+
         },
     })
 
     /**
      * Mutation ; updates a user profile on Polybase fetches for a given <id> (our id here is a ethereum address)
     */
-    const mutationUpdateUserProfile = useMutation(async function(values: {
-        publicEthAddress: string,
-        displayName: string,
-        bio: string, 
-        avatarURI: string
-    }) {
+    const mutationUpdateUserProfile = useMutation(async function(values: FormValues) {
+      const avatarURI = await handleAvatar({ originalURI: values?.avatarURI, fileToUpload: values?.avatarFile })      
         // Grab the signer
         const signer = (await walletClient?.getSigner(
             values.publicEthAddress
@@ -138,15 +153,15 @@ export function useUserProfile(userEthereumAddress?: string | null): {
         // updateProfile(displayName: string, bio: string, avatarURI: string)
         return await collectionReference
         .record(values.publicEthAddress)
-        .call("updateProfile", [values.displayName, values.bio, values.avatarURI]);
+        .call("updateProfile", [values.displayName, values.bio, avatarURI]);
     
     }, {
         onSuccess(data, variables, context) {
             queryClient.setQueryData(['profile', variables.publicEthAddress], (oldData: any) => ({
                 ...oldData,
-                displayName: variables.displayName,
-                bio: variables.bio, 
-                avatarURI: variables.avatarURI
+                displayName: data.data.displayName,
+                bio: data.data.bio, 
+                avatarURI: data.data.avatarURI
         
             }))
         },
