@@ -18,10 +18,10 @@ export interface FormValues extends FormDefaultValues {
 const Form = createForm<FormValues>()
 
 interface FormProps {
-    labelTrigger: string 
-    defaultValues: FormValues
-    statusOnSubmit: "error" | "idle" | "loading" | "success"
-    onSubmit: (values: FormValues) => Promise<void>
+  labelTrigger: string
+  defaultValues: FormValues
+  statusOnSubmit: 'error' | 'idle' | 'loading' | 'success'
+  onSubmit: (values: FormValues) => Promise<void>
 }
 export const FormProfile = (props: FormProps) => {
   const { labelTrigger, statusOnSubmit, defaultValues, onSubmit } = props
@@ -30,13 +30,12 @@ export const FormProfile = (props: FormProps) => {
    * File picker for the user account avatar
    */
   const avatarPicker = useFilepickerImage({
-    defaultImageSrc: defaultValues.avatarURI, 
-    aspect: [1, 1]
-    })
+    defaultImageSrc: defaultValues.avatarURI,
+    aspect: [1, 1],
+  })
 
   return (
     <YStack
-        
       $gtSm={{
         maxWidth: 480,
       }}
@@ -44,22 +43,32 @@ export const FormProfile = (props: FormProps) => {
     >
       <Form
         defaultValues={defaultValues}
-        onSubmit={(values) => onSubmit({
-          ...values,
-          avatarFile: avatarPicker?.imageFile
-        })}
+        onSubmit={(values) =>
+          onSubmit({
+            ...values,
+            avatarFile: avatarPicker?.imageFile,
+          })
+        }
         width="100%"
         marginHorizontal="auto"
         gap="$4"
       >
         <YStack pt="$4" pb="$1" jc="center" ai="center" space>
-           <Avatar onPress={avatarPicker.pickImage} circular borderColor="$color8" borderWidth="$0.5" size="$12">
-                <Avatar.Image src={avatarPicker?.imageUri} />
-                <Avatar.Fallback bc="$backgroundHover" />
-            </Avatar>
-            <Button onPress={avatarPicker.pickImage} theme="alt2" size="$2">
-                <Button.Text size="$1" fontWeight="bold">Pick avatar</Button.Text>
-            </Button>
+          <Avatar
+            onPress={avatarPicker.pickImage}
+            circular
+            borderColor="$color8"
+            borderWidth="$0.5"
+            size="$12"
+          >
+            <Avatar.Image src={avatarPicker?.imageUri} />
+            <Avatar.Fallback bc="$backgroundHover" />
+          </Avatar>
+          <Button onPress={avatarPicker.pickImage} theme="alt2" size="$2">
+            <Button.Text size="$1" fontWeight="bold">
+              Pick avatar
+            </Button.Text>
+          </Button>
         </YStack>
         <YStack>
           <Label htmlFor="displayName">Your display name</Label>
@@ -88,11 +97,8 @@ export const FormProfile = (props: FormProps) => {
         <Form.Trigger asChild>
           <Button themeInverse theme="alt2" disabled={statusOnSubmit === 'loading'}>
             <Button.Text fontWeight="bold">{labelTrigger}</Button.Text>
-            {statusOnSubmit === 'loading'&&
-            <Spinner color="$color12" size="small" />
-            }
+            {statusOnSubmit === 'loading' && <Spinner color="$color12" size="small" />}
           </Button>
-
         </Form.Trigger>
       </Form>
     </YStack>

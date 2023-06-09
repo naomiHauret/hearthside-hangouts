@@ -1,6 +1,6 @@
 /**
  * This is a initial schema where the whole stack is powered by Polybase
- * includes: 
+ * includes:
  * - profiles
  * - media (aka books)
  * - clubs

@@ -31,20 +31,20 @@ export default function HomeLayout() {
     <ProviderUniversalUI>
       <ThemeProvider value={scheme === 'dark' ? DarkTheme : DefaultTheme}>
         <ProviderIPFS web3StorageAccessToken={getIpfsClient()}>
-        <ProviderPolybase defaultNamespace={POLYBASE_DEFAULT_NAMESPACE} db={defaultPolybaseDb}>
-          <SafeAreaProvider>
-            <magic.Relayer />
-            {/** @ts-ignore */}
-            <ProviderMagicWallet
-              redirectURI="hearthsidehangouts://home"
-              walletClient={walletClient}
-              // @ts-ignore
-              magic={magic}
-            >
-              <RootLevelNavigator />
-            </ProviderMagicWallet>
-          </SafeAreaProvider>
-        </ProviderPolybase>
+          <ProviderPolybase defaultNamespace={POLYBASE_DEFAULT_NAMESPACE} db={defaultPolybaseDb}>
+            <SafeAreaProvider>
+              <magic.Relayer />
+              {/** @ts-ignore */}
+              <ProviderMagicWallet
+                redirectURI="hearthsidehangouts://home"
+                walletClient={walletClient}
+                // @ts-ignore
+                magic={magic}
+              >
+                <RootLevelNavigator />
+              </ProviderMagicWallet>
+            </SafeAreaProvider>
+          </ProviderPolybase>
         </ProviderIPFS>
       </ThemeProvider>
     </ProviderUniversalUI>
