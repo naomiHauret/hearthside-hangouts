@@ -1,13 +1,13 @@
 import React from 'react'
 import { ClubsScreen } from 'app/features/clubs/screen'
-import { ScreenScrollView } from '../../components/ScreenScrollview'
+import { ScrollView } from '@my/ui'
 
 export default function Screen() {
   return (
     <>
-      <ScreenScrollView useWindowScrolling={true}>
+      <ScrollView>
         <ClubsScreen />
-      </ScreenScrollView>
+      </ScrollView>
     </>
   )
 }

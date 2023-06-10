@@ -1,15 +1,14 @@
 import React from 'react'
 
 import { SignInScreen } from 'app/features/sign-in/screen'
-import { Stack } from 'expo-router'
-import { ScreenScrollView } from '../../components/ScreenScrollview'
+import { ScrollView } from '@my/ui'
 
 export default function Screen() {
   return (
     <>
-      <ScreenScrollView useWindowScrolling={true}>
+      <ScrollView>
         <SignInScreen />
-      </ScreenScrollView>
+      </ScrollView>
     </>
   )
 }
