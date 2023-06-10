@@ -105,6 +105,7 @@ Logs for your project will appear below. Press Ctrl+C to exit.
 - Authentication/wallet: [Magic](https://magic.link/) Auth SDK ;
 
 ## About the starter
+
 ---
 
 > This project was bootstrapped using the tamagui universal app starter.

@@ -5,7 +5,7 @@ import { ScrollView } from '@my/ui'
 export default function Screen() {
   return (
     <>
-      <ScrollView>
+      <ScrollView bg="$backgroundStrong">
         <ClubsScreen />
       </ScrollView>
     </>

@@ -26,6 +26,13 @@ export const RootLevelNavigator = () => {
         options={{
           title: 'Clubs',
           tabBarIcon: () => <Tent />,
+          headerShown: true,
+          headerTitleAllowFontScaling: true,
+          headerTitleStyle: {
+            fontFamily: 'serif',
+            fontStyle: 'italic',
+            fontWeight: '700',
+          },
         }}
       />
       <Tabs.Screen
@@ -33,6 +40,13 @@ export const RootLevelNavigator = () => {
         options={{
           title: 'Books',
           tabBarIcon: () => <BookMarked />,
+          headerShown: true,
+          headerTitleAllowFontScaling: true,
+          headerTitleStyle: {
+            fontFamily: 'serif',
+            fontStyle: 'italic',
+            fontWeight: '700',
+          },
         }}
       />
       <Tabs.Screen
@@ -50,6 +64,7 @@ export const RootLevelNavigator = () => {
           title: 'Profile',
           href: !userInfo?.publicAddress ? null : '/account',
           tabBarIcon: () => <UserCircle2 />,
+          headerShown: false,
         }}
       />
 
