@@ -1,10 +1,10 @@
 import { HomeScreen } from 'app/features/home/screen'
-import { ScreenScrollView } from '../components/ScreenScrollview'
+import { ScrollView } from '@my/ui'
 
 export default function Screen() {
   return (
-    <ScreenScrollView useWindowScrolling={true}>
+    <ScrollView>
       <HomeScreen />
-    </ScreenScrollView>
+    </ScrollView>
   )
 }
