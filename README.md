@@ -98,6 +98,13 @@ Logs for your project will appear below. Press Ctrl+C to exit.
 - In the Expo Go app, scan the QR code from the console or write the URL
 - Enjoy !
 
+## About
+
+- Profile, clubs, materials (books), club activity, milestones... data management: [Polybase](https://polybase.xyz) ;
+- File upload (pictures, pdf, audio): [web3.storage](https://web3.storage/) API ;
+- Authentication/wallet: [Magic](https://magic.link/) Auth SDK ;
+
+## About the starter
 ---
 
 > This project was bootstrapped using the tamagui universal app starter.
