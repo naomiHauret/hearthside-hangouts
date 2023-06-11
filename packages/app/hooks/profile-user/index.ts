@@ -1,9 +1,7 @@
 import type { CollectionRecordResponse, Polybase } from '@polybase/client'
 import type { providers } from 'ethers'
-import type { Filelike } from 'web3.storage'
 import type { FileToUpload } from '../upload-file'
 import type { FormValues } from '../../features/account/Form'
-import type { ImagePickerAsset } from 'expo-image-picker'
 import { UseMutationResult, UseQueryResult, useQueryClient } from '@tanstack/react-query'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { signMessage } from 'app/helpers'
@@ -65,6 +63,32 @@ export function useUserProfile(userEthereumAddress?: string | null): {
   const { uploadFile } = useUploadFile()
 
   /**
+   * Ensures that the proper URI of the avatar image is returned.
+   * @async
+   * @param {Object} args - The arguments for handling the avatar.
+   * @param {string} args.originalURI - The original URI of the avatar.
+   * @param {FileToUpload | null} args.fileToUpload - The file to upload as the new avatar.
+   * @returns {Promise<string>} A promise that resolves to the avatar URI, either the CID of the newly uploaded avatar or the unchanged original URI.
+   */
+  async function handleAvatar(args: { originalURI: string; fileToUpload?: FileToUpload | null }) {
+    let avatarURI = args?.originalURI
+    let fileToUpload = args?.fileToUpload
+
+    if (fileToUpload?.uri && !mutationUploadAvatar.isSuccess) {
+      avatarURI = await mutationUploadAvatar.mutateAsync(fileToUpload)
+    }
+    return avatarURI
+  }
+
+  /**
+   * Mutation ; upload the avatar file to IPFS
+   */
+  const mutationUploadAvatar = useMutation(async (fileToUpload: FileToUpload) => {
+    const cid = await uploadFile({ ...fileToUpload })
+    return cid
+  })
+
+  /**
    * Query ; fetches a user profile data from Polybase for a given <id> (our id here is a ethereum address)
    */
   const queryUserProfile = useQuery({
@@ -81,17 +105,6 @@ export function useUserProfile(userEthereumAddress?: string | null): {
     },
     enabled: !isAddress(`${userEthereumAddress}`) || !polybaseDb ? false : true,
   })
-
-  async function handleAvatar(args: { originalURI: string; fileToUpload?: FileToUpload | null }) {
-    let avatarURI = args?.originalURI
-    let fileToUpload = args?.fileToUpload
-
-    if (fileToUpload?.uri) {
-      const cid = await uploadFile({ ...fileToUpload })
-      avatarURI = cid
-    }
-    return avatarURI
-  }
 
   /**
    * Mutation ; creates a user profile on Polybase
@@ -128,16 +141,13 @@ export function useUserProfile(userEthereumAddress?: string | null): {
     },
     {
       onSuccess(data, variables, context) {
-        queryClient.setQueryData(['profile', variables.publicEthAddress], () => ({
-          ...data.data,
-        }))
-
         queryClient.setQueryData(['profile', variables.publicEthAddress], (oldData: any) => ({
           ...oldData,
           displayName: data.data.displayName,
           bio: data.data.bio,
           avatarURI: data.data.avatarURI,
         }))
+        mutationUploadAvatar.reset()
       },
     }
   )
@@ -174,12 +184,14 @@ export function useUserProfile(userEthereumAddress?: string | null): {
     },
     {
       onSuccess(data, variables, context) {
+        queryClient.invalidateQueries(['profile', variables.publicEthAddress])
         queryClient.setQueryData(['profile', variables.publicEthAddress], (oldData: any) => ({
           ...oldData,
           displayName: data.data.displayName,
           bio: data.data.bio,
           avatarURI: data.data.avatarURI,
         }))
+        mutationUploadAvatar.reset()
       },
     }
   )

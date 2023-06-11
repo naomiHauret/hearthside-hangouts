@@ -1,3 +1,4 @@
+export * from './hearthside-hangouts'
 export * from './ipfs'
 export * from './polybase'
 export * from './tanstack-query'

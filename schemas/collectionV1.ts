@@ -81,7 +81,7 @@ collection UserProfile {
     coverURI: string;
     openToNewMembers: boolean;
     materialList: ClubMaterial[]; // We need to keep track of the different material the club went through, so we'll use an array to keep track ; last element in the array = current material
-    
+    @index(creator);
     constructor (id: string, name: string, description: string, genres: string[], creator: UserProfile, coverURI: string, openToNewMembers: boolean ) {
       this.id = id;
       this.creatorPublicKey = ctx.publicKey;

@@ -1,7 +1,8 @@
 import type { FileToUpload } from '../../hooks'
-import { Button, Spinner, Label, YStack, Avatar } from '@my/ui'
+import { Button, Spinner, Label, YStack, Avatar, VisuallyHidden, Paragraph, Circle } from '@my/ui'
 import { createConfigForm, defaultComponents, defaultHelpers } from 'tamagui-react-hook-form'
 import { useFilepickerImage } from '../../hooks'
+import { uriToUrl } from '../../helpers'
 
 const createForm = createConfigForm(defaultComponents, defaultHelpers)
 
@@ -30,7 +31,7 @@ export const FormProfile = (props: FormProps) => {
    * File picker for the user account avatar
    */
   const avatarPicker = useFilepickerImage({
-    defaultImageSrc: defaultValues.avatarURI,
+    defaultImageSrc: uriToUrl(defaultValues.avatarURI),
     aspect: [1, 1],
   })
 
@@ -54,16 +55,24 @@ export const FormProfile = (props: FormProps) => {
         gap="$4"
       >
         <YStack pt="$4" pb="$1" jc="center" ai="center" space>
-          <Avatar
-            onPress={avatarPicker.pickImage}
-            circular
-            borderColor="$color8"
-            borderWidth="$0.5"
-            size="$12"
-          >
-            <Avatar.Image src={avatarPicker?.imageUri} />
-            <Avatar.Fallback bc="$backgroundHover" />
-          </Avatar>
+          <VisuallyHidden>
+            <Paragraph>Select a picture for your avatar by clicking on the button below.</Paragraph>
+          </VisuallyHidden>
+          {avatarPicker?.imageUri && avatarPicker?.imageUri !== '' ? (
+            <Avatar
+              onPress={avatarPicker.pickImage}
+              circular
+              borderColor="$color8"
+              borderWidth="$0.5"
+              size="$12"
+            >
+              <Avatar.Image src={avatarPicker?.imageUri} />
+              <Avatar.Fallback bc="$gray6" />
+            </Avatar>
+          ) : (
+            <Circle bc="$gray6" size="$12" />
+          )}
+
           <Button onPress={avatarPicker.pickImage} theme="alt2" size="$2">
             <Button.Text size="$1" fontWeight="bold">
               Pick avatar
@@ -72,11 +81,14 @@ export const FormProfile = (props: FormProps) => {
         </YStack>
         <YStack>
           <Label htmlFor="displayName">Your display name</Label>
+          <VisuallyHidden>
+            <Paragraph>What should your new friends call you ?</Paragraph>
+          </VisuallyHidden>
           {/* @ts-ignore */}
           <Form.Input
             type="text"
             placeholderColor="$color9"
-            placeholder="Type your name..."
+            placeholder="What should your new friends call you ?"
             borderWidth="$0.5"
             borderStyle="solid"
             name="displayName"
@@ -84,9 +96,14 @@ export const FormProfile = (props: FormProps) => {
           />
         </YStack>
         <YStack>
-          <Label htmlFor="bio">Your bio</Label>
+          <Label htmlFor="bio">About you</Label>
+          <VisuallyHidden>
+            <Paragraph>What should your new friends know about you ?</Paragraph>
+          </VisuallyHidden>
           {/* @ts-ignore */}
           <Form.TextArea
+            placeholder="What should your new friends know about you ?"
+            numberOfLines={6}
             placeholderColor="$color9"
             borderWidth="$0.5"
             borderStyle="solid"

@@ -67,7 +67,13 @@ export const RootLevelNavigator = () => {
           headerShown: false,
         }}
       />
-
+      <Tabs.Screen
+        name="clubs/[id]"
+        options={{
+          href: null,
+          headerShown: false,
+        }}
+      />
       <Tabs.Screen
         name="user/[id]"
         options={{
