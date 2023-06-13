@@ -14,10 +14,11 @@ import {
 import { useState } from 'react'
 import MyClubsScreen from './my-clubs/screen'
 import { Plus } from '@tamagui/lucide-icons'
-import { SheetClub, FormClub } from './create'
+import { SheetClub } from './create'
 import { useClubs } from '../../hooks'
 import slugify from 'slugify'
 import ExploreClubsScreen from './explore/screen'
+import { FormClub } from './Form'
 /**
  * Universal screen with a tabs navigator. Allows the user to see their clubs and explore other clubs.
  * @returns Clubs page

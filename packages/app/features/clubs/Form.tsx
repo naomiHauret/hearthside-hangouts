@@ -1,4 +1,4 @@
-import type { FileToUpload } from '../../../hooks'
+import type { FileToUpload } from '../../hooks'
 import {
   Button,
   Spinner,
@@ -14,7 +14,7 @@ import {
   XStack,
 } from '@my/ui'
 import { createConfigForm, defaultComponents, defaultHelpers } from 'tamagui-react-hook-form'
-import { useFilepickerImage } from '../../../hooks'
+import { useFilepickerImage } from '../../hooks'
 import { GENRES } from 'app/helpers/hearthside-hangouts'
 import { Square, CheckSquare, ChevronDown } from '@tamagui/lucide-icons'
 import { useState } from 'react'

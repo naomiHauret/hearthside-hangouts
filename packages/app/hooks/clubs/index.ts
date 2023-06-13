@@ -2,7 +2,7 @@ import type { UseMutationResult, UseQueryResult } from '@tanstack/react-query'
 import type { CollectionRecordResponse, Polybase } from '@polybase/client'
 import type { providers } from 'ethers'
 import type { FileToUpload } from '../upload-file'
-import type { FormValues } from '../../features/clubs/create/Form'
+import type { FormValues } from '../../features/clubs/Form'
 import { useQueryClient } from '@tanstack/react-query'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { signMessage } from 'app/helpers'
@@ -208,6 +208,7 @@ export function useClubs(idClub?: string | null) {
     },
     {
       onSuccess(data, variables, context) {
+        queryClient.invalidateQueries(['club', variables.idClub])
         queryClient.setQueryData(['club', variables.idClub], (oldData: any) => ({
           ...oldData,
           name: data.data.name,
@@ -215,6 +216,12 @@ export function useClubs(idClub?: string | null) {
           genres: data.data.genres,
           coverURI: data.data.coverURI,
         }))
+        queryClient.invalidateQueries([
+          'clubs-filtered',
+          'creator',
+          '==',
+          polybaseDb.collection('UserProfile').record(userInfo?.publicAddress as string),
+        ])
 
         mutationUploadCover.reset()
       },
