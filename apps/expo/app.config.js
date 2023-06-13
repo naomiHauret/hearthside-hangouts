@@ -4,7 +4,8 @@ export default {
         extra: {
             magicKey: process.env.MAGIC_KEY,
             polybaseDb: process.env.POLYBASE_DEFAULT_NAMESPACE,
-            web3StorageKey: process.env.WEB3STORAGE_KEY
+            web3StorageKey: process.env.WEB3STORAGE_KEY,
+            googleBooksKey: process.env.GOOGLEBOOKS_KEY
         }
     }
 }

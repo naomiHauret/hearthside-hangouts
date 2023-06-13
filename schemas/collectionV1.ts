@@ -45,27 +45,34 @@ collection UserProfile {
 
 // Media = fun stuff
 // For now, all medias are books
-// But hearthside hangouts could evolve to support all types of cultural clubs
+// But hearthside hangouts could evolve to support all types of cultural clubs :)
 @public
   collection Media {
     id: string;
     title: string;
-    author: string;
-    yearPublished?: string;
-    thumbnailURI?: string;
+    description: string;
+    authors: string[];
     ratings: map<PublicKey, number>;
     format: string; // audio, text, video, game
-
-    constructor( id: string, title: string, author: string, format: string, yearPublished?: string, thumbnailURI?: string) {
+    type: string; // eg: book, audiobook...
+    maturityRating?: string;
+    yearPublished?: string;
+    thumbnailURI?: string;
+    language?: string;
+    genres?: string[];
+    
+    constructor( id: string, title: string, description: string, authors: string[], format: string, type: string, thumbnailURI?: string, language?: string, genres?: string[], yearPublished?: string,  maturityRating?: string) {
       this.id = id;
       this.title = title;
-      this.author = author;
-      this.publisher = publisher;
+      this.description = description;
+      this.authors = authors;
       this.yearPublished = yearPublished;
-      this.originalPublicationYear = originalPublicationYear;
       this.thumbnailURI = thumbnailURI;
       this.ratings = {};
       this.format = format;
+      this.type = type;
+      this.genres = genres;
+      this.language = language;
     }
 
     function rate(score: number) {
