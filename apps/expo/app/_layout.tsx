@@ -1,4 +1,3 @@
-import React from 'react'
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
 import {
   Provider as ProviderUniversalUI,
@@ -8,7 +7,6 @@ import {
 } from 'app/provider'
 import { getWalletClient } from 'app/helpers'
 import { useFonts } from 'expo-font'
-import { usePathname, Tabs } from 'expo-router'
 import { useColorScheme } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { POLYBASE_DEFAULT_NAMESPACE, defaultPolybaseDb, magic, getIpfsClient } from '../config'
@@ -18,7 +16,6 @@ import RootLevelNavigator from '../navigation/RootLevelNavigator'
 const walletClient = getWalletClient(magic)
 
 export default function HomeLayout() {
-  const pathname = usePathname()
   const [loaded] = useFonts({
     Inter: require('@tamagui/font-inter/otf/Inter-Medium.otf'),
     InterBold: require('@tamagui/font-inter/otf/Inter-Bold.otf'),
@@ -27,6 +24,7 @@ export default function HomeLayout() {
   if (!loaded) {
     return null
   }
+
   return (
     <ProviderUniversalUI>
       <ThemeProvider value={scheme === 'dark' ? DarkTheme : DefaultTheme}>
@@ -36,7 +34,7 @@ export default function HomeLayout() {
               <magic.Relayer />
               {/** @ts-ignore */}
               <ProviderMagicWallet
-                redirectURI="hearthsidehangouts://home"
+                redirectURI="exp://qyaqb1c.naomihauret.19000.exp.direct"
                 walletClient={walletClient}
                 // @ts-ignore
                 magic={magic}

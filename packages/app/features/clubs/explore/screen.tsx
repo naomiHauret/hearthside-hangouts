@@ -1,17 +1,31 @@
 import { useClubs } from '../../../hooks'
-import { Paragraph } from '@my/ui'
+import { H1, Spinner, XStack, YStack } from '@my/ui'
 import CardClub from './Card'
 
+/**
+ * Universal screen that displays all clubs.
+ * @returns Clubs page
+ */
 export function ExploreClubsScreen() {
   const { queryClubs } = useClubs()
 
   return (
     <>
-      <Paragraph>All clubs</Paragraph>
-      {queryClubs.data?.data.map((clubRawData) => {
-        const club = clubRawData.data
-        return <CardClub key={`explore-${club.id}`} club={club} />
-      })}
+      <YStack space="$4">
+        <XStack space="$2">
+          {queryClubs?.isLoading && <Spinner />}
+          <H1 color="$color11" fontWeight="bold" size="$4">
+            {queryClubs?.data?.data?.length} Club
+            {(queryClubs?.data?.data?.length as number) > 1 && 's'}
+          </H1>
+        </XStack>
+        <YStack space="$4">
+          {queryClubs.data?.data.map((clubRawData) => {
+            const club = clubRawData.data
+            return <CardClub key={`moderatedbyme-${club.id}`} club={club} />
+          })}
+        </YStack>
+      </YStack>
     </>
   )
 }

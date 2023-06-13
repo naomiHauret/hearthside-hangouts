@@ -1,4 +1,4 @@
-import type { Club } from '../../../hooks'
+import { Club, useUserProfile } from '../../../hooks'
 import { useCurrentUser } from '../../../hooks'
 import { usePolybase } from '../../../provider'
 import { H1, Spinner, XStack, YStack } from '@my/ui'
@@ -9,7 +9,8 @@ import type {
   QueryWhereOperator,
 } from '@polybase/client'
 import { useQuery } from '@tanstack/react-query'
-import CardClub from './Card'
+import CardClubModerator from './CardClubModerator'
+import CardClubMembership from './CardClubMembership'
 
 function useFilteredClubs(args: {
   field: string
@@ -32,11 +33,21 @@ function useFilteredClubs(args: {
 
   return queryFilteredClubs
 }
+
+/**
+ * Universal screen that displays a user's clubs (memberships + clubs they run)
+ * @returns Clubs page
+ */
+
 export function MyClubsScreen() {
   const polybaseDb = usePolybase((s) => s.db) as Polybase
   const { userInfo } = useCurrentUser()
-
-  const queryFilteredClubs = useFilteredClubs({
+  const { queryUserClubMemberships } = useUserProfile({
+    userEthereumAddress: userInfo?.publicAddress,
+    shouldFetchProfile: false,
+    shouldFetchMemberships: true,
+  })
+  const queryClubsModeratedByCurrentUser = useFilteredClubs({
     field: 'creator',
     op: '==',
     value: polybaseDb.collection('UserProfile').record(userInfo?.publicAddress as string),
@@ -45,16 +56,25 @@ export function MyClubsScreen() {
   return (
     <YStack space="$4">
       <XStack space="$2">
-        {queryFilteredClubs?.isLoading && <Spinner />}
+        {queryClubsModeratedByCurrentUser?.isLoading ||
+          (queryUserClubMemberships?.isLoading && <Spinner />)}
         <H1 color="$color11" fontWeight="bold" size="$4">
-          {queryFilteredClubs?.data?.data?.length} Club
-          {(queryFilteredClubs?.data?.data?.length as number) > 1 && 's'}
+          {(queryClubsModeratedByCurrentUser?.data?.data?.length ?? 0) +
+            (queryUserClubMemberships?.data?.data?.length ?? 0)}{' '}
+          Club
+          {(queryClubsModeratedByCurrentUser?.data?.data?.length ?? 0) +
+            (queryUserClubMemberships?.data?.data?.length ?? 0) >
+            1 && 's'}
         </H1>
       </XStack>
       <YStack space="$4">
-        {queryFilteredClubs.data?.data.map((clubRawData) => {
+        {queryClubsModeratedByCurrentUser.data?.data.map((clubRawData) => {
           const club = clubRawData.data
-          return <CardClub key={`moderatedbyme-${club.id}`} club={club} />
+          return <CardClubModerator key={`moderatedbyme-${club.id}`} club={club} />
+        })}
+        {queryUserClubMemberships.data?.data.map((membershipRawData) => {
+          const club = membershipRawData.data.club
+          return <CardClubMembership key={`memberof-${club.id}`} idClub={club.id} />
         })}
       </YStack>
     </YStack>

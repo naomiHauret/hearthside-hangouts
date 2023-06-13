@@ -17,7 +17,6 @@
     "@tamagui/themes": "latest",
     "@tanstack/react-query": "^4.29.12",
     "burnt": "^0.10.0",
-    "crypto-random-string": "^5.0.0",
     "ethers": "5.7.1",
     "expo-constants": "^14.2.1",
     "expo-image-picker": "~14.1.1",

@@ -1,10 +1,10 @@
+import type { UseMutationResult, UseQueryResult } from '@tanstack/react-query'
 import type { CollectionRecordResponse, Polybase } from '@polybase/client'
 import type { providers } from 'ethers'
 import type { FileToUpload } from '../upload-file'
 import type { FormValues } from '../../features/clubs/create/Form'
-import { UseMutationResult, UseQueryResult, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { v4 as uuidv4 } from 'uuid'
 import { signMessage } from 'app/helpers'
 import { useMagicWallet } from 'app/provider'
 import { usePolybase } from '../../provider/polybase'
@@ -27,8 +27,6 @@ export interface ClubBaseData {
  */
 export interface Club extends ClubBaseData {
   publicKey: Object
-  membersList: Map<any, UserProfile>
-  membersCount: number
   creator: UserProfile
   creatorPublicKey: any
   coverURI: string
@@ -89,6 +87,25 @@ export function useClubs(idClub?: string | null) {
         return data?.data
       }
     },
+    enabled: !idClub || idClub === null || !polybaseDb ? false : true,
+  })
+
+  /**
+   * Query ; fetches club members from Polybase for a given <idClub>
+   */
+  const queryClubMembers = useQuery({
+    queryKey: ['members', idClub],
+    queryFn: async () => {
+      const collectionReference = polybaseDb.collection('ClubMembership')
+      const records = await collectionReference
+        .where('club', '==', polybaseDb.collection('Club').record(idClub as string))
+        .get()
+      return {
+        ...records,
+        count: records?.data?.length + 1,
+      }
+    },
+
     enabled: !idClub || idClub === null || !polybaseDb ? false : true,
   })
 
@@ -203,11 +220,87 @@ export function useClubs(idClub?: string | null) {
       },
     }
   )
+
+  /**
+   * Mutation ; creates a membership the current user in a given club on Polybase
+   */
+  const mutationJoinClub = useMutation(
+    async function (values: { idClub: string }) {
+      const currentUserEthAddress = userInfo?.publicAddress as string
+      // Grab the signer
+      const signer = (await walletClient?.getSigner(
+        currentUserEthAddress
+      )) as providers.JsonRpcSigner
+
+      // Add it to our polybase instance
+      // tried to assign in to the polybase instance in the sign in hook but it looks like we have to add it everywhere we need a signature
+      // Not very elegant but we have to !
+      polybaseDb.signer(async (data: string) => {
+        const sig = await signMessage({
+          signer,
+          message: data,
+        })
+        return { h: 'eth-personal-sign', sig: sig.signature }
+      })
+      const collectionReference = polybaseDb.collection('ClubMembership')
+      // constructor (id: string, club: Club, member: UserProfile)
+      const id = `${currentUserEthAddress}/${values.idClub}`
+      return await collectionReference.create([
+        id,
+        polybaseDb.collection('Club').record(values.idClub),
+        polybaseDb.collection('UserProfile').record(currentUserEthAddress),
+      ])
+    },
+    {
+      onSuccess(data, variables) {
+        queryClient.invalidateQueries([
+          'membership',
+          `${userInfo?.publicAddress}/${variables?.idClub}`,
+        ])
+        queryClient.invalidateQueries(['members', variables.idClub])
+      },
+    }
+  )
+
+  /**
+   * Mutation ; destroys a given membership on Polybase
+   */
+  const mutationDestroyMembership = useMutation(
+    async function (values: { idClub: string }) {
+      const currentUserEthAddress = userInfo?.publicAddress as string
+      // Grab the signer
+      const signer = (await walletClient?.getSigner(
+        currentUserEthAddress
+      )) as providers.JsonRpcSigner
+
+      // Add it to our polybase instance
+      // tried to assign in to the polybase instance in the sign in hook but it looks like we have to add it everywhere we need a signature
+      // Not very elegant but we have to !
+      polybaseDb.signer(async (data: string) => {
+        const sig = await signMessage({
+          signer,
+          message: data,
+        })
+        return { h: 'eth-personal-sign', sig: sig.signature }
+      })
+      const collectionReference = polybaseDb.collection('ClubMembership')
+      return await collectionReference.record(values?.idClub).call('del', [])
+    },
+    {
+      onSuccess(data, variables) {
+        queryClient.invalidateQueries(['membership'])
+        queryClient.invalidateQueries(['members'])
+      },
+    }
+  )
   return {
     queryClub,
+    queryClubMembers,
     queryClubs,
     mutationCreateClub,
     mutationUpdateClub,
+    mutationJoinClub,
+    mutationDestroyMembership,
   }
 }
 

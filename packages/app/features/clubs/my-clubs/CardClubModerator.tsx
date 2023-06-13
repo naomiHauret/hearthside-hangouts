@@ -1,17 +1,21 @@
 import { uriToUrl } from 'app/helpers'
-import type { Club } from '../../../hooks'
-import { useCurrentUser, useUserProfile } from '../../../hooks'
+import { Club, useClubs } from '../../../hooks'
+import { useUserProfile } from '../../../hooks'
 import { Card, XStack, Paragraph, H2, YStack, Avatar, Circle, Button, VisuallyHidden } from '@my/ui'
 import { Users } from '@tamagui/lucide-icons'
 import { useLink } from 'solito/link'
 
-interface CardClubProps {
+interface CardClubModeratorProps {
   club: Club
 }
-export const CardClub = (props: CardClubProps) => {
+export const CardClubModerator = (props: CardClubModeratorProps) => {
   const { club } = props
-  const { userInfo } = useCurrentUser()
-  const { queryUserProfile } = useUserProfile(club.creator.id)
+  const { queryClubMembers } = useClubs(club.id)
+  const { queryUserProfile } = useUserProfile({
+    userEthereumAddress: club.creator.id,
+    shouldFetchMemberships: false,
+    shouldFetchProfile: true,
+  })
   const linkClub = useLink({
     href: `/clubs/${club.id}`,
   })
@@ -33,12 +37,7 @@ export const CardClub = (props: CardClubProps) => {
               <Circle bc="$gray6" size="$2" />
             )}
 
-            <Paragraph size="$1">
-              Moderated by{' '}
-              {club.creator.id === userInfo?.publicAddress
-                ? 'you'
-                : queryUserProfile?.data?.displayName}
-            </Paragraph>
+            <Paragraph size="$1">Ran by you</Paragraph>
           </XStack>
         </YStack>
         <Paragraph pt="$2" theme="alt1">
@@ -49,15 +48,15 @@ export const CardClub = (props: CardClubProps) => {
         <XStack ai="center">
           <Users color="$color9" size="$1" />
           <Paragraph color="$color9" size="$1" paddingStart="$2">
-            {club.membersCount}
+            {queryClubMembers?.data?.count}
           </Paragraph>
         </XStack>
         <VisuallyHidden>
-          <Paragraph>Click Go to details page details</Paragraph>
+          <Paragraph>Go to club details</Paragraph>
         </VisuallyHidden>
       </Card.Footer>
     </Card>
   )
 }
 
-export default CardClub
+export default CardClubModerator

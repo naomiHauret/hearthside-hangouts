@@ -17,6 +17,7 @@ import { Plus } from '@tamagui/lucide-icons'
 import { SheetClub, FormClub } from './create'
 import { useClubs } from '../../hooks'
 import slugify from 'slugify'
+import ExploreClubsScreen from './explore/screen'
 /**
  * Universal screen with a tabs navigator. Allows the user to see their clubs and explore other clubs.
  * @returns Clubs page
@@ -82,7 +83,7 @@ export function ClubsScreen() {
             <MyClubsScreen />
           </TabsContent>
           <TabsContent value="tab2">
-            <H5 textAlign="center">Explore clubs screen</H5>
+            <ExploreClubsScreen />
           </TabsContent>
         </Tabs>
       </ScrollView>

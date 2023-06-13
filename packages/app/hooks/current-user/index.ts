@@ -3,6 +3,7 @@ import type { UseMutationResult, UseQueryResult } from '@tanstack/react-query'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { create } from 'zustand'
 import { useMagicWallet } from '../../provider/magic-wallet'
+import { useEffect } from 'react'
 
 /**
  * zustand store to get/set the current user's auth/wallet information
@@ -36,6 +37,7 @@ export function useCurrentUser(): {
   >
   mutationSignOut: UseMutationResult<boolean, unknown, void, unknown>
   queryCurrentUserInfo: UseQueryResult<MagicUserMetadata | undefined, unknown>
+  queryIsCurrentUserConnected: UseQueryResult<boolean | undefined, unknown>
 } {
   const queryClient = useQueryClient()
   const magic = useMagicWallet((s) => s.magic)
@@ -62,8 +64,8 @@ export function useCurrentUser(): {
     },
     async onSuccess(data) {
       setUserInfo(data)
-      queryClient.setQueryData(['is-connected'], () => true)
-      queryClient.setQueryData(['current-user'], () => data)
+      queryClient.setQueryData(['is-connected'], (oldData) => true)
+      queryClient.setQueryData(['current-user'], (oldData) => data)
     },
   })
 
@@ -78,8 +80,8 @@ export function useCurrentUser(): {
     async onSuccess(isDisconnected) {
       if (isDisconnected === true) {
         setUserInfo(undefined)
-        queryClient.setQueryData(['is-connected'], () => false)
-        queryClient.setQueryData(['current-user'], () => undefined)
+        queryClient.setQueryData(['is-connected'], (oldData) => false)
+        queryClient.setQueryData(['current-user'], (oldData) => undefined)
       }
     },
   })
@@ -113,6 +115,7 @@ export function useCurrentUser(): {
     mutationSignIn,
     mutationSignOut,
     queryCurrentUserInfo,
+    queryIsCurrentUserConnected,
   }
 }
 export default useCurrentUser

@@ -1,4 +1,4 @@
-import type { CollectionRecordResponse, Polybase } from '@polybase/client'
+import type { CollectionList, CollectionRecordResponse, Polybase } from '@polybase/client'
 import type { providers } from 'ethers'
 import type { FileToUpload } from '../upload-file'
 import type { FormValues } from '../../features/account/Form'
@@ -32,8 +32,13 @@ export interface UserProfile extends UserProfileBaseData {
  *
  * @param {string|null} userEthereumAddress - The Ethereum address to get profile data for.
  */
-export function useUserProfile(userEthereumAddress?: string | null): {
+export function useUserProfile(args: {
+  userEthereumAddress?: string | null
+  shouldFetchProfile?: boolean
+  shouldFetchMemberships?: boolean
+}): {
   queryUserProfile: UseQueryResult<UserProfile | undefined, unknown>
+  queryUserClubMemberships: UseQueryResult<CollectionList<any>, unknown>
   mutationCreateUserProfile: UseMutationResult<
     CollectionRecordResponse<any, any>,
     unknown,
@@ -92,10 +97,10 @@ export function useUserProfile(userEthereumAddress?: string | null): {
    * Query ; fetches a user profile data from Polybase for a given <id> (our id here is a ethereum address)
    */
   const queryUserProfile = useQuery({
-    queryKey: ['profile', userEthereumAddress],
+    queryKey: ['profile', args?.userEthereumAddress],
     queryFn: async () => {
       const collectionReference = polybaseDb.collection('UserProfile')
-      const record = await collectionReference.record(`${userEthereumAddress}`).get()
+      const record = await collectionReference.record(`${args?.userEthereumAddress}`).get()
       return record
     },
     select(data): undefined | UserProfile {
@@ -103,7 +108,34 @@ export function useUserProfile(userEthereumAddress?: string | null): {
         return data?.data
       }
     },
-    enabled: !isAddress(`${userEthereumAddress}`) || !polybaseDb ? false : true,
+    enabled:
+      !isAddress(`${args?.userEthereumAddress}`) || args?.shouldFetchProfile !== true || !polybaseDb
+        ? false
+        : true,
+  })
+
+  /**
+   * Query ; fetches list of club memberships for a given user from Polybase
+   */
+  const queryUserClubMemberships = useQuery({
+    queryKey: ['memberships', args?.userEthereumAddress],
+    queryFn: async () => {
+      const collectionReference = polybaseDb.collection('ClubMembership')
+      const records = await collectionReference
+        .where(
+          'member',
+          '==',
+          polybaseDb.collection('UserProfile').record(args?.userEthereumAddress as string)
+        )
+        .get()
+      return records
+    },
+    enabled:
+      !isAddress(`${args?.userEthereumAddress}`) ||
+      !polybaseDb ||
+      args?.shouldFetchMemberships !== true
+        ? false
+        : true,
   })
 
   /**
@@ -147,6 +179,8 @@ export function useUserProfile(userEthereumAddress?: string | null): {
           bio: data.data.bio,
           avatarURI: data.data.avatarURI,
         }))
+        queryClient.invalidateQueries(['profile', variables.publicEthAddress])
+
         mutationUploadAvatar.reset()
       },
     }
@@ -196,6 +230,7 @@ export function useUserProfile(userEthereumAddress?: string | null): {
     }
   )
   return {
+    queryUserClubMemberships,
     queryUserProfile,
     mutationCreateUserProfile,
     mutationUpdateUserProfile,

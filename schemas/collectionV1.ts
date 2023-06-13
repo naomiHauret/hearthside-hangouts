@@ -34,6 +34,13 @@ collection UserProfile {
     this.bio = bio;
     this.avatarURI = avatarURI;
   }
+
+  del () {
+    if (this.publicKey != ctx.publicKey) {
+      throw error();
+    }
+    selfdestruct();
+  }
 }
 
 // Media = fun stuff
@@ -74,14 +81,13 @@ collection UserProfile {
     name: string;
     description: string;
     genres: string[];
-    membersList: map<PublicKey, UserProfile>;
-    membersCount: number;
     creator: UserProfile;
     creatorPublicKey: PublicKey;
     coverURI: string;
     openToNewMembers: boolean;
     materialList: ClubMaterial[]; // We need to keep track of the different material the club went through, so we'll use an array to keep track ; last element in the array = current material
     @index(creator);
+    
     constructor (id: string, name: string, description: string, genres: string[], creator: UserProfile, coverURI: string, openToNewMembers: boolean ) {
       this.id = id;
       this.creatorPublicKey = ctx.publicKey;
@@ -91,8 +97,6 @@ collection UserProfile {
       this.creator = creator;
       this.coverURI = coverURI;
       this.openToNewMembers = openToNewMembers;
-      this.membersList = {};
-      this.membersCount = 1;
       this.materialList = [];
     }
 
@@ -108,41 +112,48 @@ collection UserProfile {
       this.openToNewMembers = openToNewMembers;
     }
 
-    function joinClub(profile: UserProfile) {
-      if ( ctx.publicKey != profile.publicKey) {
-        error('Only the owner of this profile can join a club.');
-      }
-      if (this.openToNewMembers == false) {
-        error('This club is not open to new members.');
-      }
-      if (this.membersList[ctx.publicKey] != undefined) {
-        error('You are already a member of this club.');
-      }
-      this.membersList[ctx.publicKey] = profile;
-      this.membersCount = this.membersCount + 1;
-    }
-
-    function leaveClub() {
-      if ( ctx.publicKey != profile.publicKey && ctx.publicKey != this.creatorPublicKey ) {
-        error('Only the owner of this profile or the club creator can remove club membership.');
-      }
-      if (this.membersList[ctx.publicKey] == undefined) {
-        error('There is no membership for this club associated to this profile.');
-      }
-
-      this.membersList[ctx.publicKey] = undefined;
-      this.membersCount = this.membersCount - 1;
-    }
-
     function addNewReadingMaterial(material: ClubMaterial) { 
       if (ctx.publicKey != this.creatorPublicKey) {
         error('Only the club creator can set the material used by the club.');
       }
       this.materialList = materialList.push(material);
     }
+
+    del () {
+    if (this.creatorPublicKey != ctx.publicKey) {
+      throw error();
+    }
+    selfdestruct();
+  }
 }
 
-// What the club is currently using as their material
+@public
+  collection ClubMembership {
+    id: string;
+    club: Club;
+    member: UserProfile;
+    memberPublicKey: PublicKey;
+    canRevoke: PublicKey[];
+    @index(club);
+    @index(member);
+
+    constructor (id: string, club: Club, member: UserProfile) {
+      this.id = id;
+      this.memberPublicKey = ctx.publicKey;
+      this.member = member;
+      this.club = club;
+      this.canRevoke = [ctx.publicKey, club.creatorPublicKey];
+    }
+
+    del () {
+    if (!this.canRevoke.includes(ctx.publicKey)) {
+      throw error();
+    }
+    selfdestruct();
+  }
+}
+
+// What the club is currently using as their reading material
 @public
   collection ClubMaterial {
     id: string;
@@ -150,6 +161,8 @@ collection UserProfile {
     material: Media;
     milestones: Milestone[];
     creatorPublicKey: PublicKey;
+
+    @index(material);
 
     constructor (id: string, material: Media, milestones:  Milestone[] ) {
       this.id = id;
@@ -169,21 +182,28 @@ collection UserProfile {
 @public
   collection Milestone {
     id: string;
-    club: Club;
+    clubMaterial: ClubMaterial;
     creatorPublicKey: PublicKey;
     title: string;
     notes: string;
     start: number;
     end: number;
-
-    constructor (id: string, title: string, notes: string, start: number, end: number, club: Club ) {
+    
+    @index(clubMaterial);
+    constructor (id: string, title: string, notes: string, start: number, end: number, clubMaterial: ClubMaterial ) {
       this.id = id ;
       this.creatorPublicKey = ctx.publicKey;
-      this.club = club;
+      this.clubMaterial = clubMaterial;
       this.title = title;
       this.start = start;
       this.end = end;
       this.notes = notes;
     }
-}
-`
+
+   del () {
+    if (ctx.publicKey != this.creatorPublicKey) {
+      throw error();
+    }
+    selfdestruct();
+  }
+}`

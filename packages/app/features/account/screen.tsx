@@ -10,7 +10,11 @@ import { useCurrentUser, useUserProfile } from 'app/hooks'
 export function AccountScreen() {
   const { userInfo } = useCurrentUser()
   const { queryUserProfile, mutationCreateUserProfile, mutationUpdateUserProfile } = useUserProfile(
-    userInfo?.publicAddress as string | undefined
+    {
+      userEthereumAddress: userInfo?.publicAddress as string | undefined,
+      shouldFetchMemberships: true,
+      shouldFetchProfile: true,
+    }
   )
 
   return (
