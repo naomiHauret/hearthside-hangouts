@@ -8,6 +8,15 @@
  * - milestones
  */
 const polybaseSchema = `
+/**
+  Hearthside Hangouts
+  Cultural clubs online meetups
+  - Create your profile
+  - Create your club
+  - Set a study material (book, movie... but just books for  now)
+  - Set milestones
+  - Discuss with fellow club members
+*/
 @public
 collection UserProfile {
   id: string;
@@ -43,11 +52,11 @@ collection UserProfile {
   }
 }
 
-// Media = fun stuff
+// SourceMaterial = fun stuff
 // For now, all medias are books
 // But hearthside hangouts could evolve to support all types of cultural clubs :)
 @public
-  collection Media {
+  collection SourceMaterial {
     id: string;
     title: string;
     description: string;
@@ -60,6 +69,8 @@ collection UserProfile {
     thumbnailURI?: string;
     language?: string;
     genres?: string[];
+
+    @index(title);
     
     constructor( id: string, title: string, description: string, authors: string[], format: string, type: string, thumbnailURI?: string, language?: string, genres?: string[], yearPublished?: string,  maturityRating?: string) {
       this.id = id;
@@ -165,13 +176,13 @@ collection UserProfile {
   collection ClubMaterial {
     id: string;
     club: Club;
-    material: Media;
+    material: SourceMaterial;
     milestones: Milestone[];
     creatorPublicKey: PublicKey;
 
     @index(material);
 
-    constructor (id: string, material: Media, milestones:  Milestone[] ) {
+    constructor (id: string, material: SourceMaterial, milestones:  Milestone[] ) {
       this.id = id;
       this.creatorPublicKey = ctx.publicKey;
       this.material = material;
