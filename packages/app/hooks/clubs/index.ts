@@ -31,7 +31,7 @@ export interface Club extends ClubBaseData {
   creatorPublicKey: any
   coverURI: string
   openToNewMembers: boolean
-  materialList: Array<any>
+  currentClubMaterial?: string
 }
 
 /**
@@ -106,6 +106,27 @@ export function useClubs(idClub?: string | null) {
       }
     },
 
+    enabled: !idClub || idClub === null || !polybaseDb ? false : true,
+  })
+
+  /**
+   * Query get a list of given club materials for a specific club
+   */
+  const queryListClubMaterial = useQuery({
+    queryKey: ['club-materials', idClub],
+    queryFn: async () => {
+      const collectionReference = polybaseDb.collection('ClubMaterial')
+      const records = await collectionReference
+        .where('club', '==', polybaseDb.collection('Club').record(idClub as string))
+        .get()
+
+      return records
+    },
+    select(data) {
+      if (data?.data !== null) {
+        return data?.data
+      }
+    },
     enabled: !idClub || idClub === null || !polybaseDb ? false : true,
   })
 
@@ -300,14 +321,51 @@ export function useClubs(idClub?: string | null) {
       },
     }
   )
+
+  /**
+   * Mutation ; set the current reading material
+   */
+  const mutationSetClubMaterial = useMutation(
+    async function (values: { idClub: string; idClubMaterial: string }) {
+      const currentUserEthAddress = userInfo?.publicAddress as string
+      // Grab the signer
+      const signer = (await walletClient?.getSigner(
+        currentUserEthAddress
+      )) as providers.JsonRpcSigner
+
+      // Add it to our polybase instance
+      // tried to assign in to the polybase instance in the sign in hook but it looks like we have to add it everywhere we need a signature
+      // Not very elegant but we have to !
+      polybaseDb.signer(async (data: string) => {
+        const sig = await signMessage({
+          signer,
+          message: data,
+        })
+        return { h: 'eth-personal-sign', sig: sig.signature }
+      })
+
+      // we must call this function:  setCurrentMaterial (clubMaterial: ClubMaterial)
+      const collectionReference = polybaseDb.collection('Club')
+      return await collectionReference
+        .record(values?.idClub as string)
+        .call('setCurrentMaterial', [values.idClubMaterial])
+    },
+    {
+      onSuccess(data, variables) {
+        queryClient.invalidateQueries(['club', variables?.idClub])
+      },
+    }
+  )
   return {
     queryClub,
     queryClubMembers,
     queryClubs,
+    queryListClubMaterial,
     mutationCreateClub,
     mutationUpdateClub,
     mutationJoinClub,
     mutationDestroyMembership,
+    mutationSetClubMaterial,
   }
 }
 

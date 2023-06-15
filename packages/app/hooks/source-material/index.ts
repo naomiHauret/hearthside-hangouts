@@ -24,7 +24,11 @@ export interface SourceMaterial {
   maturityRating?: string
 }
 
-export function useSourceMaterial(args: { isbn?: string; shouldFetchMaterial?: boolean }) {
+export function useSourceMaterial(args: {
+  id?: string
+  shouldFetchMaterial?: boolean
+  onQuerySourceMaterialSuccess?: any
+}) {
   const queryClient = useQueryClient()
   const polybaseDb = usePolybase((s) => s.db) as Polybase
   const walletClient = useMagicWallet((s) => s.walletClient)
@@ -32,20 +36,24 @@ export function useSourceMaterial(args: { isbn?: string; shouldFetchMaterial?: b
 
   const querySourceMaterial = useQuery({
     enabled:
-      !args?.isbn || args?.isbn?.length === 0 || args?.shouldFetchMaterial !== true ? false : true,
-    queryKey: ['source-material', args?.isbn],
+      !args?.id || args?.id?.length === 0 || args?.shouldFetchMaterial !== true ? false : true,
+    queryKey: ['source-material', args?.id],
     onSuccess(data) {
-      console.log(data)
+      if (data?.data === null) args?.onQuerySourceMaterialSuccess()
     },
     queryFn: async () => {
       const collectionReference = polybaseDb.collection('SourceMaterial')
-      const record = await collectionReference.record(`${args?.isbn}`).get()
+      const record = await collectionReference.record(`${args?.id}`).get()
       return record
+    },
+    select(data) {
+      if (data?.data) return data?.data
+      return data
     },
   })
   const mutationCreateSourceMaterial = useMutation(
     async (values: {
-      isbn: string
+      id: string
       title: string
       description: string
       authors: Array<string>
@@ -75,7 +83,7 @@ export function useSourceMaterial(args: { isbn?: string; shouldFetchMaterial?: b
       //     constructor( id: string, title: string, description: string, authors: string[], format: string, type: string, thumbnailURI?: string, language?: string, genres?: string[], yearPublished?: string,  maturityRating?: string) {
 
       return await collectionReference.create([
-        values.isbn,
+        values.id,
         values.title,
         values.description,
         values.authors,

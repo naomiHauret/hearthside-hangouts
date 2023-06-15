@@ -1,8 +1,7 @@
 import { uriToUrl } from 'app/helpers'
-import { Club, useClubs } from '../../../hooks'
+import { Club, useClubMaterial, useSourceMaterial } from '../../../hooks'
 import { useUserProfile } from '../../../hooks'
-import { Card, XStack, Paragraph, H2, YStack, Avatar, Circle, Button, VisuallyHidden } from '@my/ui'
-import { Users } from '@tamagui/lucide-icons'
+import { Card, XStack, Paragraph, H2, YStack, Avatar, Circle, Image, VisuallyHidden } from '@my/ui'
 import { useLink } from 'solito/link'
 
 interface CardClubModeratorProps {
@@ -10,7 +9,6 @@ interface CardClubModeratorProps {
 }
 export const CardClubModerator = (props: CardClubModeratorProps) => {
   const { club } = props
-  const { queryClubMembers } = useClubs(club.id)
   const { queryUserProfile } = useUserProfile({
     userEthereumAddress: club.creator.id,
     shouldFetchMemberships: false,
@@ -20,10 +18,54 @@ export const CardClubModerator = (props: CardClubModeratorProps) => {
     href: `/clubs/${club.id}`,
   })
 
+  const { queryClubMaterialDetails } = useClubMaterial({
+    shouldFetchClubMaterial: true,
+    idClubMaterial: club?.currentClubMaterial as string,
+  })
+
+  const { querySourceMaterial } = useSourceMaterial({
+    id: queryClubMaterialDetails?.data?.material?.id as string,
+    shouldFetchMaterial: true,
+  })
+
+  if (
+    queryUserProfile.isLoading ||
+    querySourceMaterial?.isLoading ||
+    queryClubMaterialDetails?.isLoading
+  )
+    return (
+      <Card position="relative" bordered elevate size="$4">
+        <Card.Header flexDirection="row" ai="center" padded>
+          <YStack overflow="hidden" borderRadius="$2" width={80} bg="$color6" height={120} />
+        </Card.Header>
+      </Card>
+    )
+
   return (
     <Card position="relative" elevate size="$4" bordered {...linkClub}>
-      <Card.Header padded>
-        <YStack space="$2" flexDirection="column-reverse">
+      <Card.Header flexDirection="row" ai="center" padded>
+        <YStack
+          elevation="$1"
+          overflow="hidden"
+          borderRadius="$2"
+          width={80}
+          bg="$color6"
+          height={120}
+        >
+          <Image
+            borderRadius="$2"
+            source={{
+              uri: querySourceMaterial?.data?.thumbnailURI,
+              width: 80,
+              height: 120,
+            }}
+          />
+        </YStack>
+        <YStack width="75%" paddingStart="$4" gap="$2" flexDirection="column">
+          <Paragraph theme="alt1" size="$1">
+            {querySourceMaterial?.data?.title && `Reading "${querySourceMaterial?.data?.title}"`}
+          </Paragraph>
+
           <H2 size="$8" tt="none">
             {club.name}
           </H2>
@@ -37,20 +79,13 @@ export const CardClubModerator = (props: CardClubModeratorProps) => {
               <Circle bc="$gray6" size="$2" />
             )}
 
-            <Paragraph size="$1">Ran by you</Paragraph>
+            <Paragraph color="$color9" size="$1">
+              Ran by you
+            </Paragraph>
           </XStack>
         </YStack>
-        <Paragraph pt="$2" theme="alt1">
-          {club.description}
-        </Paragraph>
       </Card.Header>
-      <Card.Footer padded pt="$2">
-        <XStack ai="center">
-          <Users color="$color9" size="$1" />
-          <Paragraph color="$color9" size="$1" paddingStart="$2">
-            {queryClubMembers?.data?.count}
-          </Paragraph>
-        </XStack>
+      <Card.Footer>
         <VisuallyHidden>
           <Paragraph>Go to club details</Paragraph>
         </VisuallyHidden>

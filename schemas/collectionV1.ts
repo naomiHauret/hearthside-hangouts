@@ -8,6 +8,8 @@
  * - milestones
  */
 const polybaseSchema = `
+
+
 /**
   Hearthside Hangouts
   Cultural clubs online meetups
@@ -103,8 +105,10 @@ collection UserProfile {
     creatorPublicKey: PublicKey;
     coverURI: string;
     openToNewMembers: boolean;
-    materialList: ClubMaterial[]; // We need to keep track of the different material the club went through, so we'll use an array to keep track ; last element in the array = current material
+    currentMaterial: ClubMaterial;
+
     @index(creator);
+    @index(name);
     
     constructor (id: string, name: string, description: string, genres: string[], creator: UserProfile, coverURI: string, openToNewMembers: boolean ) {
       this.id = id;
@@ -115,7 +119,6 @@ collection UserProfile {
       this.creator = creator;
       this.coverURI = coverURI;
       this.openToNewMembers = openToNewMembers;
-      this.materialList = [];
     }
 
     function updateClubInfo (name: string, description: string, genres: string[],  coverURI: string, openToNewMembers: boolean) {
@@ -130,11 +133,12 @@ collection UserProfile {
       this.openToNewMembers = openToNewMembers;
     }
 
-    function addNewReadingMaterial(material: ClubMaterial) { 
+    function setCurrentMaterial (clubMaterial: ClubMaterial) {
+      // Check if the caller is the original creator of the record.
       if (ctx.publicKey != this.creatorPublicKey) {
-        error('Only the club creator can set the material used by the club.');
+        error('Only the club creator can update the current material.');
       }
-      this.materialList = materialList.push(material);
+      this.currentMaterial = clubMaterial;
     }
 
     del () {
@@ -177,51 +181,53 @@ collection UserProfile {
     id: string;
     club: Club;
     material: SourceMaterial;
-    milestones: Milestone[];
     creatorPublicKey: PublicKey;
-
+    milestones: string[]; // we store milestones as a stringified objects with the following shape: { title ; notes ; start ; end }
+    createdAt: number;
+    
     @index(material);
+    @index(club);
 
-    constructor (id: string, material: SourceMaterial, milestones:  Milestone[] ) {
+    constructor (id: string, material: SourceMaterial, club: Club, createdAt: number) {
       this.id = id;
       this.creatorPublicKey = ctx.publicKey;
       this.material = material;
-      this.milestones = milestones;
+      this.milestones = [];
+      this.club = club;
+      this.createdAt = createdAt;
     }
 
-    function setMilestones(milestones: Milestone[]) {
-      if (ctx.publicKey != this.creatorPublicKey) {
+    function setMilestones(milestones: string[]) {
+      if (ctx.publickKey != this.club.creatorPublicKey && ctx.publicKey != this.creatorPublicKey) {
         error('Only the club creator can configure the milestones.');
       }
       this.milestones = milestones;
     }
-}
 
-@public
-  collection Milestone {
-    id: string;
-    clubMaterial: ClubMaterial;
-    creatorPublicKey: PublicKey;
-    title: string;
-    notes: string;
-    start: number;
-    end: number;
-    
-    @index(clubMaterial);
-    constructor (id: string, title: string, notes: string, start: number, end: number, clubMaterial: ClubMaterial ) {
-      this.id = id ;
-      this.creatorPublicKey = ctx.publicKey;
-      this.clubMaterial = clubMaterial;
-      this.title = title;
-      this.start = start;
-      this.end = end;
-      this.notes = notes;
-    }
-
-   del () {
-    if (ctx.publicKey != this.creatorPublicKey) {
+    del () {
+    if (ctx.publickKey != this.club.creatorPublicKey && ctx.publicKey != this.creatorPublicKey) {
       throw error();
     }
     selfdestruct();
   }
-}`
+}
+
+
+/**
+  Dropped collections
+  we don't use those
+*/
+
+collection City {
+  id: string;
+}
+collection Media {
+  id: string;
+}
+collection Milestone {
+  id: string;
+}
+collection Milestones {
+  id: string;
+}
+`

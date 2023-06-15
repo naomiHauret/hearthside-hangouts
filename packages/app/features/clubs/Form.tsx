@@ -77,7 +77,7 @@ export const FormClub = (props: FormProps) => {
         <YStack pt="$4" pb="$1" jc="center" ai="center" space>
           <XStack width="$20" aspectRatio={1.91 / 1} bg="$backgroundFocus">
             {coverPicker?.imageUri && coverPicker?.imageUri !== '' && (
-              <Image source={{ uri: coverPicker?.imageUri }} width="100%" height="100%" />
+              <Image source={{ uri: coverPicker?.imageUri }} />
             )}
           </XStack>
           <Button onPress={coverPicker.pickImage} theme="alt2" size="$2">

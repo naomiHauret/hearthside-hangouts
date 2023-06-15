@@ -17,6 +17,7 @@ interface VolumeInfoImages extends VolumeInfoBaseImages {
 }
 
 interface VolumeInfo {
+  id: string
   title: string
   subtitle: string
   authors: Array<string>
@@ -55,15 +56,26 @@ export function useSearchBooks(): {
       `https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=20&startIndex=${pageParam}&key=${apiKeyGoogleBooks}`
     )
     const results = await response.json()
-    const items = results?.items?.map((volume) => ({
-      ...volume?.volumeInfo,
-      imageLinks: {
-        ...volume?.volumeInfo?.imageLinks,
-        altSm: `https://covers.openlibrary.org/b/isbn/${volume.volumeInfo.industryIdentifiers[0]?.identifier}-S.jpg`,
-        altMd: `https://covers.openlibrary.org/b/isbn/${volume.volumeInfo.industryIdentifiers[0]?.identifier}-M.jpg`,
-        altLg: `https://covers.openlibrary.org/b/isbn/${volume.volumeInfo.industryIdentifiers[0]?.identifier}-L.jpg`,
-      },
-    }))
+    const items = results?.items?.map((volume, i) => {
+      if (volume?.volumeInfo?.industryIdentifiers) {
+        return {
+          ...volume?.volumeInfo,
+          imageLinks: {
+            ...volume?.volumeInfo?.imageLinks,
+            altSm: `https://covers.openlibrary.org/b/isbn/${volume?.volumeInfo?.industryIdentifiers[0]?.identifier}-S.jpg`,
+            altMd: `https://covers.openlibrary.org/b/isbn/${volume?.volumeInfo?.industryIdentifiers[0]?.identifier}-M.jpg`,
+            altLg: `https://covers.openlibrary.org/b/isbn/${volume?.volumeInfo?.industryIdentifiers[0]?.identifier}-L.jpg`,
+          },
+        }
+      }
+      return {
+        ...volume?.volumeInfo,
+        imageLinks: {
+          ...volume?.volumeInfo?.imageLinks,
+        },
+      }
+    })
+
     const select = {
       ...results,
       items,

@@ -5,8 +5,8 @@ import {
   Button,
   Circle,
   H1,
+  H2,
   H3,
-  H4,
   Header,
   Image,
   Paragraph,
@@ -20,7 +20,13 @@ import {
 import { BookTemplate, BookUp, Edit2, Users } from '@tamagui/lucide-icons'
 import { useQuery } from '@tanstack/react-query'
 import { uriToUrl } from 'app/helpers'
-import { useClubs, useCurrentUser, useUserProfile } from 'app/hooks'
+import {
+  useClubMaterial,
+  useClubs,
+  useCurrentUser,
+  useSourceMaterial,
+  useUserProfile,
+} from 'app/hooks'
 import { usePolybase } from 'app/provider'
 import React, { useEffect, useState } from 'react'
 import { createParam } from 'solito'
@@ -28,6 +34,7 @@ import { LinearGradient } from 'tamagui/linear-gradient'
 import { isAddress } from 'ethers/lib/utils'
 import SheetUpdateDetails from './SheetUpdateDetails'
 import FormClub from '../Form'
+import SelectMaterial from './SelectMaterial'
 
 const { useParam } = createParam<{ id: string }>()
 
@@ -45,8 +52,19 @@ export function ClubDetailScreen() {
     mutationJoinClub,
     mutationDestroyMembership,
   } = useClubs(id)
+
   const polybaseDb = usePolybase((s) => s.db) as Polybase
   const [isUpdateDetailsOpen, setIsUpdateDetailsOpen] = useState(false)
+  const [isUpdateClubMaterialOpen, setIsUpdateClubMaterialOpen] = useState(false)
+  const { queryClubMaterialDetails } = useClubMaterial({
+    shouldFetchClubMaterial: true,
+    idClubMaterial: queryClub?.data?.currentClubMaterial as string,
+  })
+
+  const { querySourceMaterial } = useSourceMaterial({
+    id: queryClubMaterialDetails?.data?.material?.id as string,
+    shouldFetchMaterial: true,
+  })
 
   useEffect(() => {
     if (isUpdateDetailsOpen === false) mutationUpdateClub.reset()
@@ -87,9 +105,10 @@ export function ClubDetailScreen() {
             <XStack fullscreen f={1} flexGrow={1} bg="$green7">
               {queryClub?.data?.coverURI && queryClub?.data?.coverURI !== '' && (
                 <Image
-                  source={{ uri: uriToUrl(queryClub?.data?.coverURI) }}
                   width="100%"
-                  height="100%"
+                  aspectRatio={1.25 / 1}
+                  height={250}
+                  source={{ uri: uriToUrl(queryClub?.data?.coverURI) }}
                 />
               )}
             </XStack>
@@ -211,18 +230,92 @@ export function ClubDetailScreen() {
             px="$4"
             mt="$4"
           >
-            <H4 pb="$2">Current read</H4>
-            {moderator?.queryUserProfile?.data?.id &&
-            userInfo?.publicAddress === moderator?.queryUserProfile?.data?.id ? (
+            <XStack ai="center" pb="$4">
+              <H2 fontFamily="$body" fontWeight="bold" color="$color12" size="$5">
+                Current read
+              </H2>
+              {queryClub?.data?.currentClubMaterial &&
+                queryClub?.data?.currentClubMaterial !== '' &&
+                moderator?.queryUserProfile?.data?.id &&
+                userInfo?.publicAddress === moderator?.queryUserProfile?.data?.id && (
+                  <Button
+                    marginStart="auto"
+                    onPress={() => setIsUpdateClubMaterialOpen(true)}
+                    ai="center"
+                    jc="center"
+                    flexDirection="row"
+                    unstyled
+                  >
+                    <Button.Text fontWeight="bold" color="$color11" py="$2">
+                      Change
+                    </Button.Text>
+                  </Button>
+                )}
+            </XStack>
+            {!queryClub?.data?.currentClubMaterial ||
+            queryClub?.data?.currentClubMaterial === '' ? (
               <>
-                <Button chromeless size="$12">
-                  <BookUp size="$6" />
-                </Button>
+                {moderator?.queryUserProfile?.data?.id &&
+                userInfo?.publicAddress === moderator?.queryUserProfile?.data?.id ? (
+                  <YStack
+                    py="$6"
+                    px="$4"
+                    ai="center"
+                    jc="center"
+                    borderStyle="dashed"
+                    borderWidth="$1"
+                    borderColor="$color6"
+                    theme="alt1"
+                  >
+                    <Paragraph pb="$6" ta="center" fontStyle="italic">
+                      You didn't select any read for your club yet.
+                    </Paragraph>
+                    <Button
+                      onPress={() => setIsUpdateClubMaterialOpen(true)}
+                      ai="center"
+                      jc="center"
+                      flexDirection="column"
+                      unstyled
+                    >
+                      <BookUp size="$6" />
+                      <Button.Text fontWeight="bold" color="$color11" py="$2">
+                        Pick a read
+                      </Button.Text>
+                    </Button>
+                  </YStack>
+                ) : (
+                  <>
+                    <BookTemplate />
+                  </>
+                )}
               </>
             ) : (
-              <>
-                <BookTemplate />
-              </>
+              <XStack gap="$3">
+                <YStack overflow="hidden" borderRadius="$2" bg="$color6" width={100}>
+                  <Image
+                    source={{
+                      uri: querySourceMaterial?.data?.thumbnailURI,
+                      width: 100,
+                      height: 150,
+                    }}
+                    minWidth="100%"
+                  />
+                </YStack>
+                <YStack>
+                  <Paragraph fontFamily="$body" size="$4">
+                    {querySourceMaterial?.data?.title}
+                  </Paragraph>
+                  <Paragraph theme="alt1" fontFamily="$body" size="$1">
+                    {querySourceMaterial?.data?.authors.toString()}
+                  </Paragraph>
+                  <Paragraph theme="alt2" fontFamily="$body" size="$1">
+                    {querySourceMaterial?.data?.yearPublished}
+                  </Paragraph>
+                  <Paragraph theme="alt2" mt="auto" fontFamily="$body" size="$1">
+                    {querySourceMaterial?.data?.genres.toString()}
+                  </Paragraph>
+                </YStack>
+              </XStack>
             )}
           </YStack>
         </YStack>
@@ -230,28 +323,42 @@ export function ClubDetailScreen() {
 
       {userInfo?.publicAddress === moderator?.queryUserProfile?.data?.id &&
         queryClub?.data?.creator && (
-          <SheetUpdateDetails open={isUpdateDetailsOpen} setOpen={setIsUpdateDetailsOpen}>
-            <H3>Edit club details</H3>
-            <FormClub
-              onSubmit={async (values) => {
-                const idClub = id
-                await mutationUpdateClub.mutateAsync({
-                  ...values,
-                  idClub,
-                  coverURI: queryClub?.data?.coverURI as string,
-                })
-              }}
-              statusOnSubmit={mutationUpdateClub.status}
-              defaultValues={{
-                name: queryClub?.data?.name,
-                description: queryClub?.data?.description,
-                genres: queryClub?.data?.genres,
-                coverURI: uriToUrl(queryClub?.data?.coverURI),
-                openToNewMembers: queryClub?.data?.openToNewMembers,
-              }}
-              labelTrigger={mutationUpdateClub?.isLoading ? 'Updating...' : 'Update club details'}
-            />
-          </SheetUpdateDetails>
+          <>
+            <SheetUpdateDetails open={isUpdateDetailsOpen} setOpen={setIsUpdateDetailsOpen}>
+              <H3>Edit club details</H3>
+              <FormClub
+                onSubmit={async (values) => {
+                  const idClub = id
+                  await mutationUpdateClub.mutateAsync({
+                    ...values,
+                    idClub,
+                    coverURI: queryClub?.data?.coverURI as string,
+                  })
+                }}
+                statusOnSubmit={mutationUpdateClub.status}
+                defaultValues={{
+                  name: queryClub?.data?.name,
+                  description: queryClub?.data?.description,
+                  genres: queryClub?.data?.genres,
+                  coverURI: uriToUrl(queryClub?.data?.coverURI),
+                  openToNewMembers: queryClub?.data?.openToNewMembers,
+                }}
+                labelTrigger={mutationUpdateClub?.isLoading ? 'Updating...' : 'Update club details'}
+              />
+            </SheetUpdateDetails>
+            <SheetUpdateDetails
+              open={isUpdateClubMaterialOpen}
+              setOpen={setIsUpdateClubMaterialOpen}
+            >
+              <H3>Change current club read</H3>
+              <SelectMaterial
+                setIsUpdateClubMaterialOpen={setIsUpdateClubMaterialOpen}
+                defaultValues={{
+                  idClub: id as string,
+                }}
+              />
+            </SheetUpdateDetails>
+          </>
         )}
     </>
   )
