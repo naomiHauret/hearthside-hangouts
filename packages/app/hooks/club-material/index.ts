@@ -6,6 +6,29 @@ import { signMessage } from 'app/helpers'
 import { useMagicWallet } from 'app/provider'
 import { usePolybase } from '../../provider/polybase'
 import useCurrentUser from '../current-user'
+import { fromUnixTime, format } from 'date-fns'
+
+export interface ClubMaterial {
+  club: {
+    collectionId: string
+    id: string
+  }
+  createdAt: number
+  creatorPublicKey: Object
+  id: string
+  material: {
+    collectionId: string
+    id: string
+  }
+  milestones: Array<Milestone>
+}
+
+export interface Milestone {
+  id: string
+  title: string
+  notes: string
+  startAt: number
+}
 
 export function useClubMaterial(args: {
   idClubMaterial?: string
@@ -29,7 +52,17 @@ export function useClubMaterial(args: {
     },
     select(data) {
       if (data?.data !== null) {
-        return data?.data
+        const milestones = data.data.milestones.map((stringifiedMilestone) => {
+          const milestone = JSON.parse(stringifiedMilestone)
+          return {
+            ...milestone,
+            startAt: parseInt(milestone.startAt),
+          }
+        })
+        return {
+          ...data?.data,
+          milestones,
+        } as ClubMaterial
       }
     },
     enabled:

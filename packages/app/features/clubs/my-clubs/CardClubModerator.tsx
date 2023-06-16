@@ -9,6 +9,7 @@ interface CardClubModeratorProps {
 }
 export const CardClubModerator = (props: CardClubModeratorProps) => {
   const { club } = props
+
   const { queryUserProfile } = useUserProfile({
     userEthereumAddress: club.creator.id,
     shouldFetchMemberships: false,

@@ -1,5 +1,5 @@
 import type { Polybase } from '@polybase/client'
-
+import type { Club, RatedSourceMaterial } from '../../../hooks'
 import {
   Avatar,
   Button,
@@ -10,23 +10,25 @@ import {
   Header,
   Image,
   Paragraph,
+  Separator,
   SizableText,
   Spinner,
+  Tabs,
   VisuallyHidden,
   XStack,
   YStack,
   ZStack,
 } from '@my/ui'
 import { BookTemplate, BookUp, Edit2, Users } from '@tamagui/lucide-icons'
-import { useQuery } from '@tanstack/react-query'
-import { uriToUrl } from 'app/helpers'
+import { UseQueryResult, useQuery } from '@tanstack/react-query'
+import { GENRES, uriToUrl } from 'app/helpers'
 import {
   useClubMaterial,
   useClubs,
   useCurrentUser,
   useSourceMaterial,
   useUserProfile,
-} from 'app/hooks'
+} from '../../../hooks'
 import { usePolybase } from 'app/provider'
 import React, { useEffect, useState } from 'react'
 import { createParam } from 'solito'
@@ -35,6 +37,11 @@ import { isAddress } from 'ethers/lib/utils'
 import SheetUpdateDetails from './SheetUpdateDetails'
 import FormClub from '../Form'
 import SelectMaterial from './SelectMaterial'
+import TabsContent from './TabContent'
+import Discussions from './discussions/screen'
+import Schedule from './schedule/screen'
+import EditSchedule from './schedule/edit/screen'
+import { ProviderEditSchedule } from './schedule/edit/Provider'
 
 const { useParam } = createParam<{ id: string }>()
 
@@ -64,7 +71,7 @@ export function ClubDetailScreen() {
   const { querySourceMaterial } = useSourceMaterial({
     id: queryClubMaterialDetails?.data?.material?.id as string,
     shouldFetchMaterial: true,
-  })
+  }) as { querySourceMaterial: UseQueryResult<RatedSourceMaterial, unknown> }
 
   useEffect(() => {
     if (isUpdateDetailsOpen === false) mutationUpdateClub.reset()
@@ -96,6 +103,8 @@ export function ClubDetailScreen() {
     shouldFetchMemberships: false,
     shouldFetchProfile: true,
   })
+
+  const [currentTab, setCurrentTab] = useState('tab1')
 
   return (
     <>
@@ -143,9 +152,23 @@ export function ClubDetailScreen() {
           </YStack>
         </Header>
         <YStack pt="$3" px="$3">
-          <Paragraph pb="$4" theme="alt1">
+          <Paragraph pb="$3" theme="alt1">
             {queryClub?.data?.description}
           </Paragraph>
+          <XStack theme="gray" flexWrap="wrap" pb="$6" gap="$2">
+            {queryClub?.data?.genres?.map((genre) => (
+              <SizableText
+                size="$1"
+                px="$2"
+                color="$color9"
+                borderRadius="$20"
+                bg="$backgroundStrong"
+                key={`clubdetails-${queryClub?.data?.id}-tag-${genre}`}
+              >
+                {GENRES[genre]}
+              </SizableText>
+            ))}
+          </XStack>
 
           <XStack jc="space-between" ai="flex-end">
             <YStack>
@@ -229,6 +252,7 @@ export function ClubDetailScreen() {
             pb="$6"
             px="$4"
             mt="$4"
+            mb="$4"
           >
             <XStack ai="center" pb="$4">
               <H2 fontFamily="$body" fontWeight="bold" color="$color12" size="$5">
@@ -306,21 +330,91 @@ export function ClubDetailScreen() {
                     {querySourceMaterial?.data?.title}
                   </Paragraph>
                   <Paragraph theme="alt1" fontFamily="$body" size="$1">
-                    {querySourceMaterial?.data?.authors.toString()}
+                    {querySourceMaterial?.data?.authors?.toString()}
                   </Paragraph>
                   <Paragraph theme="alt2" fontFamily="$body" size="$1">
                     {querySourceMaterial?.data?.yearPublished}
                   </Paragraph>
                   <Paragraph theme="alt2" mt="auto" fontFamily="$body" size="$1">
-                    {querySourceMaterial?.data?.genres.toString()}
+                    {querySourceMaterial?.data?.genres?.toString()}
                   </Paragraph>
                 </YStack>
               </XStack>
             )}
+            <YStack>
+              <Separator mt="$6" mb="$4" />
+              {queryClub?.data?.creator?.id === userInfo?.publicAddress &&
+                queryClubMaterialDetails?.data?.milestones && (
+                  <YStack mb="$6">
+                    <ProviderEditSchedule milestones={queryClubMaterialDetails?.data?.milestones}>
+                      <EditSchedule clubMaterialDetails={queryClubMaterialDetails?.data} />
+                    </ProviderEditSchedule>
+                  </YStack>
+                )}
+              <Tabs
+                mx="$-4"
+                px="$4"
+                flexGrow={1}
+                f={1}
+                defaultValue="tab1"
+                flexDirection="column"
+                orientation="horizontal"
+                overflow="hidden"
+              >
+                <Tabs.List
+                  disablePassBorderRadius="end"
+                  aria-label="Club schedule and discussions"
+                  flexDirection="row"
+                >
+                  <Tabs.Tab
+                    onInteraction={() => setCurrentTab('tab1')}
+                    borderBottomColor={currentTab === 'tab2' ? '$color4' : '$color10'}
+                    backgroundColor={
+                      currentTab === 'tab2' ? '$background' : '$backgroundTransparent'
+                    }
+                    borderRadius={0}
+                    borderBottomWidth="$1"
+                    flexGrow={1}
+                    value="tab1"
+                  >
+                    <SizableText color="$color10" fontSize="$1" tt="uppercase" fontWeight="bold">
+                      Discussions
+                    </SizableText>
+                  </Tabs.Tab>
+                  <Tabs.Tab
+                    bg="$bgTransparent"
+                    onInteraction={() => setCurrentTab('tab2')}
+                    borderRadius={0}
+                    flexGrow={1}
+                    backgroundColor={
+                      currentTab === 'tab1' ? '$background' : '$backgroundTransparent'
+                    }
+                    borderBottomColor={currentTab === 'tab1' ? '$color4' : '$color10'}
+                    borderBottomWidth="$1"
+                    value="tab2"
+                  >
+                    <SizableText color="$color10" fontSize="$1" tt="uppercase" fontWeight="bold">
+                      Schedule
+                    </SizableText>
+                  </Tabs.Tab>
+                </Tabs.List>
+                <Separator vertical />
+                <TabsContent value="tab1">
+                  <Paragraph>
+                    <Discussions idClub={id} />
+                  </Paragraph>
+                </TabsContent>
+                <TabsContent value="tab2">
+                  <Schedule
+                    material={querySourceMaterial?.data as RatedSourceMaterial}
+                    milestones={queryClubMaterialDetails?.data?.milestones}
+                  />
+                </TabsContent>
+              </Tabs>
+            </YStack>
           </YStack>
         </YStack>
       </YStack>
-
       {userInfo?.publicAddress === moderator?.queryUserProfile?.data?.id &&
         queryClub?.data?.creator && (
           <>

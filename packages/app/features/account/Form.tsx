@@ -103,7 +103,7 @@ export const FormProfile = (props: FormProps) => {
           {/* @ts-ignore */}
           <Form.TextArea
             placeholder="What should your new friends know about you ?"
-            numberOfLines={6}
+            numberOfLines={2}
             placeholderColor="$color9"
             borderWidth="$0.5"
             borderStyle="solid"

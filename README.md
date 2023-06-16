@@ -1,11 +1,11 @@
 # 🏕️ 🔥 Hearthside Hangouts
 
-Online (audio 🔊) bookclubs.
+a cozy, (audio 🔊) bookclub app.
 
 - 🏕️ Create your club
 - 📚 Set the reading list of your club
 - 📅 Plan out reading and discussion milestones
-- 🗣️ Discuss with fellow readers
+- 🗣️ Discuss and read with yout book buddies in dedicated audio rooms
 
 ## 📱🧑‍💻 Get started with Hearthside Hangouts mobile app (Expo app, dev mode)
 
@@ -19,6 +19,8 @@ Online (audio 🔊) bookclubs.
 > - A Polybase db that follows the schema defined in `./schemas/collectionV1.ts`
 > - A Web3.Storage API Key
 > - A Google Books API Key
+> - A Huddle01 API Key and project ID
+> - A Livepeer API Key
 
 - Install dependencies: `yarn`
 - In `apps/expo`, run `eas project:init` and initialize a project
@@ -103,6 +105,7 @@ Logs for your project will appear below. Press Ctrl+C to exit.
 
 - Profile, clubs, materials (books), club activity, milestones... data management: [Polybase](https://polybase.xyz) ;
 - File upload (pictures, pdf, audio): [web3.storage](https://web3.storage/) API ;
+- Live group audio chat: [Livepeer](https://livepeer.org) & Livekit UI ;
 - Authentication/wallet: [Magic](https://magic.link/) Auth SDK ;
 
 ## About the starter

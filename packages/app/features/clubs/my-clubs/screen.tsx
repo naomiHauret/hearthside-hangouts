@@ -56,8 +56,9 @@ export function MyClubsScreen() {
   return (
     <YStack space="$4">
       <XStack space="$2">
-        {queryClubsModeratedByCurrentUser?.isLoading ||
-          (queryUserClubMemberships?.isLoading && <Spinner />)}
+        {(queryClubsModeratedByCurrentUser?.isLoading || queryUserClubMemberships?.isLoading) && (
+          <Spinner />
+        )}
         <H1 color="$color11" fontWeight="bold" size="$4">
           {(queryClubsModeratedByCurrentUser?.data?.data?.length ?? 0) +
             (queryUserClubMemberships?.data?.data?.length ?? 0)}{' '}

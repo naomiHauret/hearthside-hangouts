@@ -106,6 +106,7 @@ export const FormClub = (props: FormProps) => {
           </VisuallyHidden>
           {/* @ts-ignore */}
           <Form.TextArea
+            numberOfLines={2}
             placeholderColor="$color9"
             borderWidth="$0.5"
             borderStyle="solid"

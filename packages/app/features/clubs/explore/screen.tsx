@@ -15,7 +15,7 @@ export function ExploreClubsScreen() {
         <XStack space="$2">
           {queryClubs?.isLoading && <Spinner />}
           <H1 color="$color11" fontWeight="bold" size="$4">
-            {queryClubs?.data?.data?.length} Club
+            {queryClubs?.isSuccess && queryClubs?.data?.data?.length} Club
             {(queryClubs?.data?.data?.length as number) > 1 && 's'}
           </H1>
         </XStack>

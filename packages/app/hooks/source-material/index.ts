@@ -1,12 +1,9 @@
-import type { CollectionList, CollectionRecordResponse, Polybase } from '@polybase/client'
+import type { Polybase } from '@polybase/client'
 import type { providers } from 'ethers'
-import type { FileToUpload } from '../upload-file'
-import type { FormValues } from '../../features/account/Form'
-import { UseMutationResult, UseQueryResult, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { signMessage } from 'app/helpers'
 import { useMagicWallet } from 'app/provider'
-import { isAddress } from 'ethers/lib/utils'
 import { usePolybase } from '../../provider/polybase'
 import useCurrentUser from '../current-user'
 
@@ -22,6 +19,12 @@ export interface SourceMaterial {
   genres?: string[]
   yearPublished?: string
   maturityRating?: string
+}
+
+export interface RatedSourceMaterial extends SourceMaterial {
+  ratings: {
+    [idUserProfile: string]: number
+  }
 }
 
 export function useSourceMaterial(args: {
@@ -47,7 +50,7 @@ export function useSourceMaterial(args: {
       return record
     },
     select(data) {
-      if (data?.data) return data?.data
+      if (data?.data) return data?.data as RatedSourceMaterial
       return data
     },
   })
