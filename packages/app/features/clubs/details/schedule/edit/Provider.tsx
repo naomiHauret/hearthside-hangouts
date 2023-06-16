@@ -10,7 +10,7 @@ import Constants from 'expo-constants'
 import { createContext, useContext, useRef } from 'react'
 import { createStore, useStore } from 'zustand'
 
-export const LIVEPEER_APIKEY = `${Constants?.expoConfig?.extra?.livepeerKey}`
+export const HUDDLE01_APIKEY = `${Constants?.expoConfig?.extra?.huddle01Key}`
 
 /**
  * This provider is NOT universal
@@ -19,9 +19,14 @@ interface EditScheduleProps {
   milestones: Array<Milestone>
 }
 interface EditScheduleState extends EditScheduleProps {
-  newMilestone: (title: string, notes: string, startAt: number) => Promise<Milestone[]>
+  newMilestone: (
+    title: string,
+    notes: string,
+    startAt: number,
+    hostWallets: Array<string>
+  ) => Promise<Milestone[]>
   updateMilestone: (id: string, title: string, notes: string, startAt: number) => Milestone[]
-  deleteMilestone: (indexMilestoneToRemove: string) => Promise<Milestone[]>
+  deleteMilestone: (indexMilestoneToRemove: string) => Milestone[]
 }
 
 type EditScheduleStore = ReturnType<typeof createEditScheduleStore>
@@ -39,21 +44,43 @@ const createEditScheduleStore = (initProps?: Partial<EditScheduleProps>) => {
   return createStore<EditScheduleState>()((set, get) => ({
     ...DEFAULT_PROPS,
     ...initProps,
-    newMilestone: async (title: string, notes: string, startAt: number) => {
-      const response = await fetch('https://livepeer.studio/api/room', {
+    newMilestone: async (
+      title: string,
+      notes: string,
+      startAt: number,
+      hostWallets: Array<string>
+    ) => {
+      // first, we create the id of the milestone, which will be the id of the audio room to simplify things
+      const response = await fetch('https://api.huddle01.com/api/v1/create-room', {
         method: 'POST',
+        body: JSON.stringify({
+          title, // The title of the room. This will be displayed in the room list.
+          description: notes?.trim() === '' ? 'no description provided' : notes, // The description of the room. This will be displayed in the room list.
+          roomLocked: false, // The start time of the room. This will be displayed in the room list.
+          muteOnEntry: true, // Every new peer who joins must be muted
+          videoOnEntry: true, // Every new peer who joins must have their video turned off
+          hostWallets, // The host wallets how who will have admin access to the room.
+        }),
         headers: {
-          Authorization: `Bearer ${LIVEPEER_APIKEY}`,
+          'Content-type': 'application/json',
+          'x-api-key': HUDDLE01_APIKEY,
         },
       })
-      const result: { id: string } = await response.json()
+      const result: {
+        message: string
+        data: {
+          roomId: string
+          meetingLink: string
+        }
+      } = await response.json()
+      console.log(result)
       const milestone: Milestone = {
-        id: result.id,
+        id: result.data.roomId,
         title: title ?? '',
         notes: notes ?? '',
         startAt: `${startAt}` ?? '',
       }
-      milestone.id = result.id
+      milestone.id = result?.data?.roomId
       const previousMilestones = get().milestones
       const milestones = [...previousMilestones, milestone]
       set({ milestones })
@@ -61,7 +88,9 @@ const createEditScheduleStore = (initProps?: Partial<EditScheduleProps>) => {
     },
 
     updateMilestone: (id: string, title: string, notes: string, startAt: number) => {
-      let milestoneToUpdate = get().milestones.filter((milestone) => milestone.id === id)[0]
+      let milestoneToUpdate = get().milestones.filter(
+        (milestone) => milestone.id === id
+      )[0] as Milestone
       let filtered = get().milestones.filter((milestone) => milestone.id !== id)
 
       milestoneToUpdate = {
@@ -75,13 +104,7 @@ const createEditScheduleStore = (initProps?: Partial<EditScheduleProps>) => {
       set({ milestones })
       return milestones
     },
-    deleteMilestone: async (indexMilestoneToRemove: string) => {
-      await fetch(`https://livepeer.studio/api/room/${indexMilestoneToRemove}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${LIVEPEER_APIKEY}`,
-        },
-      })
+    deleteMilestone: (indexMilestoneToRemove: string) => {
       const previousMilestones = get().milestones
       const milestones = previousMilestones.filter(
         (milestone) => milestone.id !== indexMilestoneToRemove
@@ -181,7 +204,9 @@ export function useEditSchedule(idClubMaterial: string) {
   }
   const mutationAddNewMilestone = useMutation(
     async (values: { title: string; notes: string; startAt: number }) => {
-      const updated = await addNewMilestone(values.title, values.notes, values.startAt)
+      const updated = await addNewMilestone(values.title, values.notes, values.startAt, [
+        userInfo?.publicAddress as string,
+      ])
       return await editMilestones(updated)
     },
     {
