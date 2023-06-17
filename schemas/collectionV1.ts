@@ -2,14 +2,14 @@
  * This is a initial schema where the whole stack is powered by Polybase
  * includes:
  * - profiles
- * - media (aka books)
+ * - source material (aka books)
  * - clubs
  * - club material
- * - milestones
+ * - club memberships
+ * - club discussions
+ * - rsvp
  */
 const polybaseSchema = `
-
-
 /**
   Hearthside Hangouts
   Cultural clubs online meetups
@@ -19,6 +19,7 @@ const polybaseSchema = `
   - Set milestones
   - Discuss with fellow club members
 */
+
 @public
 collection UserProfile {
   id: string;
@@ -71,10 +72,11 @@ collection UserProfile {
     thumbnailURI?: string;
     language?: string;
     genres?: string[];
+    tableOfContents?: string[];
 
     @index(title);
     
-    constructor( id: string, title: string, description: string, authors: string[], format: string, type: string, thumbnailURI?: string, language?: string, genres?: string[], yearPublished?: string,  maturityRating?: string) {
+    constructor( id: string, title: string, description: string, authors: string[], format: string, type: string, thumbnailURI?: string, language?: string, genres?: string[], yearPublished?: string,  maturityRating?: string, tableOfContents?: string[]) {
       this.id = id;
       this.title = title;
       this.description = description;
@@ -86,6 +88,11 @@ collection UserProfile {
       this.type = type;
       this.genres = genres;
       this.language = language;
+      this.tableOfContents = tableOfContents;
+    }
+
+    function setTableOfContents(tableOfContents: string[]) {
+      this.tableOfContents = tableOfContents;
     }
 
     function rate(score: number) {
@@ -212,7 +219,55 @@ collection UserProfile {
   }
 }
 
+// Discussion
+// Discussions can happen in the club lobby, chapter rooms or review rooms
+@public
+collection ClubDiscussion {
+    id: string;
+    club: Club;
+    messages: string[];
+    clubMaterial?: ClubMaterial;
+  
+    @index(club);
+    @index(clubMaterial);
 
+    constructor (id: string, club: Club, clubMaterial?: ClubMaterial) {
+      this.id = id;
+      this.club = club;
+      this.messages = messages;
+      this.clubMaterial = ClubMaterial;
+    }
+  
+  function postMessage(message: string, proofOfMembership: ClubMembership) {
+    // Verify that the current user isn't impersonating another user and is a member of the club
+    if (proofOfMembership.memberPublicKey != ctx.publicKey || proofOfMembership.club.id != this.club.id) {
+        error('Only the club members can post messages.');
+      }
+      this.messages.push(messages);
+    }
+}
+
+// Store the events for which the user RSVPed
+collection RSVP {
+  id: string;
+  idEvent: string;
+  profile: UserProfile;
+
+  @index(profile);
+  @index(idEvent);
+
+  constructor (id: string, idEvent: idEvent, profile: UserProfile) {
+      this.id = id;
+      this.profile = profile;
+      this.idEvent = idEvent;
+  }  
+  del () {
+  if (ctx.publickKey != this.user.publicKey) {
+      throw error();
+    }
+    selfdestruct();
+  }
+}
 /**
   Dropped collections
   we don't use those
@@ -230,4 +285,5 @@ collection Milestone {
 collection Milestones {
   id: string;
 }
+
 `
