@@ -11,18 +11,21 @@
  */
 const polybaseSchema = `
 /**
-  Hearthside Hangouts
-  Cultural clubs online meetups
-  - Create your profile
-  - Create your club
-  - Set a study material (book, movie... but just books for  now)
-  - Set milestones
-  - Discuss with fellow club members
-*/
+ * This is a initial schema where the whole stack is powered by Polybase
+ * includes:
+ * - profiles
+ * - source material (aka books)
+ * - clubs
+ * - club material
+ * - club memberships
+ * - club discussions
+ * - rsvp
+ */
 
 @public
 collection UserProfile {
   id: string;
+  @delegate
   publicKey: PublicKey;
   publicAddress: string;
   displayName: string; 
@@ -251,18 +254,19 @@ collection ClubDiscussion {
 collection RSVP {
   id: string;
   idEvent: string;
+  @read
   profile: UserProfile;
 
   @index(profile);
   @index(idEvent);
 
-  constructor (id: string, idEvent: idEvent, profile: UserProfile) {
+  constructor (id: string, idEvent: string, profile: UserProfile) {
       this.id = id;
       this.profile = profile;
       this.idEvent = idEvent;
   }  
   del () {
-  if (ctx.publickKey != this.user.publicKey) {
+  if (ctx.publickKey != this.profile.publicKey) {
       throw error();
     }
     selfdestruct();

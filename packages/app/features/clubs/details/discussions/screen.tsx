@@ -1,4 +1,4 @@
-import { formatRelative, fromUnixTime, isFuture, isToday } from 'date-fns'
+import { addHours, formatRelative, fromUnixTime, isFuture, isToday } from 'date-fns'
 import type { RatedSourceMaterial, Milestone } from '../../../../hooks'
 import { YGroup, XStack, ListItem, SizableText, Paragraph, H5, Separator, Button } from '@my/ui'
 import { Mic } from '@tamagui/lucide-icons'
@@ -15,13 +15,13 @@ export const Discussions = (props: DiscussionsProps) => {
     <>
       {milestones?.filter(
         (milestone: Milestone) =>
-          isToday(fromUnixTime(milestone.startAt)) && isFuture(fromUnixTime(milestone.startAt))
+          isToday(fromUnixTime(milestone.startAt)) && isFuture(addHours(fromUnixTime(milestone.startAt), 3 ))
       )?.length > 0 && (
         <>
           <XStack ai="center" space="$2" theme="alt2" pb="$2">
             <Mic size="$1" />
             <H5 theme="alt2" fontWeight="bold" size="$1">
-              Later today
+              Today
             </H5>
           </XStack>
 
@@ -36,7 +36,7 @@ export const Discussions = (props: DiscussionsProps) => {
                       title={<SizableText fontWeight="bold">{milestone.title}</SizableText>}
                       subTitle={
                         <SizableText theme="alt1" size="$2">
-                          {formatRelative(fromUnixTime(milestone.startAt), new Date())}
+                          starting {formatRelative(fromUnixTime(milestone.startAt), new Date())}
                         </SizableText>
                       }
                     >
@@ -47,9 +47,7 @@ export const Discussions = (props: DiscussionsProps) => {
                       )}
                       {canAccessEvents && (
                         <Button size="$3" mt="$4">
-                          <Button.Text fontWeight="bold" t>
-                            Join convo
-                          </Button.Text>
+                          <Button.Text fontWeight="bold">Join convo</Button.Text>
                         </Button>
                       )}
                     </ListItem>

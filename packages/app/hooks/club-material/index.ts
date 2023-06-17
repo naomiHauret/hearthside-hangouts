@@ -6,7 +6,6 @@ import { signMessage } from 'app/helpers'
 import { useMagicWallet } from 'app/provider'
 import { usePolybase } from '../../provider/polybase'
 import useCurrentUser from '../current-user'
-import { fromUnixTime, format } from 'date-fns'
 
 export interface ClubMaterial {
   club: {
