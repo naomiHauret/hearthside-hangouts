@@ -120,8 +120,6 @@ export function useUserProfile(args: {
   const queryUserClubMemberships = useQuery({
     queryKey: ['memberships', args?.userEthereumAddress],
     queryFn: async () => {
-      console.log('runnin KKEg')
-
       const collectionReference = polybaseDb.collection('ClubMembership')
       const records = await collectionReference
         .where(

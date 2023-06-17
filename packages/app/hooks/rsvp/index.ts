@@ -115,9 +115,7 @@ export function useRSVP(args: { shouldFetchRSVPs?: boolean; idMilestone?: string
     },
     {
       onSuccess(data, variables) {
-        console.log('data', data)
         queryClient.invalidateQueries(['rsvp', args?.idMilestone, userInfo?.publicAddress])
-
         queryClient.invalidateQueries(['rsvps-user', userInfo?.publicAddress])
       },
     }

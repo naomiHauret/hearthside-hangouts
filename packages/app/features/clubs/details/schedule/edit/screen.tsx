@@ -87,7 +87,6 @@ export const EditSchedule = (props: EditScheduleProps) => {
 
               <YGroup separator={<Separator />} alignSelf="center" bordered size="$4">
                 {milestones?.map((milestone: Milestone) => {
-                  console.log(milestone.id)
                   return (
                     <YGroup.Item key={milestone.id}>
                       <ListItem

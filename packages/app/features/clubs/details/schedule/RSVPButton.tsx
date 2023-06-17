@@ -1,11 +1,10 @@
-import { addHours, fromUnixTime } from 'date-fns'
 import type { Milestone, RatedSourceMaterial, Club } from '../../../../hooks'
-import { Button, Spinner, YStack } from '@my/ui'
 import useCalendar from '@atiladev/usecalendar'
+import { Button, Spinner, YStack } from '@my/ui'
 import { useMutation } from '@tanstack/react-query'
+import { addHours, fromUnixTime } from 'date-fns'
 import * as Calendar from 'expo-calendar'
-import { CalendarCheck } from '@tamagui/lucide-icons'
-import { useRSVP } from 'app/hooks/rsvp'
+import { useRSVP } from '../../../../hooks'
 
 interface RSVPButtonProps {
   milestone: Milestone

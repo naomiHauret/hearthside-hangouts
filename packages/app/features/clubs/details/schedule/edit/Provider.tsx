@@ -73,7 +73,6 @@ const createEditScheduleStore = (initProps?: Partial<EditScheduleProps>) => {
           meetingLink: string
         }
       } = await response.json()
-      console.log(result)
       const milestone: Milestone = {
         id: result.data.roomId,
         title: title ?? '',

@@ -1,7 +1,8 @@
 import { addHours, formatRelative, fromUnixTime, isFuture, isToday } from 'date-fns'
 import type { RatedSourceMaterial, Milestone } from '../../../../hooks'
-import { YGroup, XStack, ListItem, SizableText, Paragraph, H5, Separator, Button } from '@my/ui'
+import { YGroup, XStack, YStack, ListItem, SizableText, Paragraph, H5, Separator, Button } from '@my/ui'
 import { Mic } from '@tamagui/lucide-icons'
+import JoinButton from './JoinButton'
 
 interface DiscussionsProps {
   material: RatedSourceMaterial | undefined
@@ -45,10 +46,9 @@ export const Discussions = (props: DiscussionsProps) => {
                           {milestone.notes}
                         </Paragraph>
                       )}
-                      {canAccessEvents && (
-                        <Button size="$3" mt="$4">
-                          <Button.Text fontWeight="bold">Join convo</Button.Text>
-                        </Button>
+                      {canAccessEvents && (<YStack pt="$2">
+                       <JoinButton roomId={milestone.id} />
+                       </YStack>
                       )}
                     </ListItem>
                   </YGroup.Item>

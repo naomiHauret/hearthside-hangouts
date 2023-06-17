@@ -47,10 +47,11 @@ export function useSourceMaterial(args: {
     queryFn: async () => {
       const collectionReference = polybaseDb.collection('SourceMaterial')
       const record = await collectionReference.record(`${args?.id}`).get()
+      console.log(record)
       return record
     },
     select(data) {
-      if (data?.data) return data?.data as RatedSourceMaterial
+      if (data?.data) {return data?.data as RatedSourceMaterial}
       return data
     },
   })
