@@ -1,13 +1,16 @@
-import { format, isPast, isDate, toDate, fromUnixTime } from 'date-fns'
+import { formatRelative, fromUnixTime, isFuture } from 'date-fns'
 import type { RatedSourceMaterial, Milestone } from '../../../../hooks'
 import { YGroup, ListItem, SizableText, Paragraph, Separator } from '@my/ui'
+import RSVPButton from './RSVPButton'
 
 interface ScheduleProps {
   material: RatedSourceMaterial | undefined
   milestones: Milestone[] | undefined
+  canAccessEvents: boolean
 }
 export const Schedule = (props: ScheduleProps) => {
-  const { milestones } = props
+  const { milestones, club, canAccessEvents, material } = props
+
   return (
     <YGroup bordered separator={<Separator />}>
       {milestones?.map((milestone: Milestone) => {
@@ -18,8 +21,7 @@ export const Schedule = (props: ScheduleProps) => {
               title={<SizableText fontWeight="bold">{milestone.title}</SizableText>}
               subTitle={
                 <SizableText theme="alt1" size="$2">
-                  {format(fromUnixTime(milestone.startAt), 'PPPP')} -{' '}
-                  {format(fromUnixTime(milestone.startAt), 'p z')}
+                  {formatRelative(fromUnixTime(milestone.startAt), new Date())}
                 </SizableText>
               }
             >
@@ -27,6 +29,9 @@ export const Schedule = (props: ScheduleProps) => {
                 <Paragraph pt="$2" size="$2">
                   {milestone.notes}
                 </Paragraph>
+              )}
+              {isFuture(fromUnixTime(milestone.startAt)) && canAccessEvents && (
+                <RSVPButton club={club} material={material} milestone={milestone} />
               )}
             </ListItem>
           </YGroup.Item>

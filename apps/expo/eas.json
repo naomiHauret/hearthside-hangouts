@@ -1,6 +1,7 @@
 {
   "build": {
     "development": {
+      "developmentClient": true,
       "distribution": "internal",
       "android": {
         "buildType": "apk"
@@ -12,6 +13,9 @@
       "env": {
         "TAMAGUI_TARGET": "native"
       }
+    },
+    "preview": {
+      "distribution": "internal"
     },
     "production": {
       "distribution": "store",

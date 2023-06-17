@@ -27,6 +27,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@atiladev/usecalendar@npm:^0.3.3":
+  version: 0.3.3
+  resolution: "@atiladev/usecalendar@npm:0.3.3"
+  checksum: 8f8fbc02012847382b0addf9825860da7828c2c0f39442d9928352b9e8ac4a5cd69b5805ac7520cf9caed6ee7889762805b31b3b129dd1f402aa26e6f324a971
+  languageName: node
+  linkType: hard
+
 "@aveq-research/localforage-asyncstorage-driver@npm:^3.0.1":
   version: 3.0.1
   resolution: "@aveq-research/localforage-asyncstorage-driver@npm:3.0.1"
@@ -4006,6 +4013,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-async-storage/async-storage@npm:1.17.11":
+  version: 1.17.11
+  resolution: "@react-native-async-storage/async-storage@npm:1.17.11"
+  dependencies:
+    merge-options: ^3.0.4
+  peerDependencies:
+    react-native: ^0.0.0-0 || 0.60 - 0.71 || 1000.0.0
+  checksum: 691f2b74498160d0b532f673402d8affeecb28b005b1c6d6fa2e7c87f89ab3068177e8e2d2686738306e7592a39c6d7148aa4c426b7e8e149c43a336ad446648
+  languageName: node
+  linkType: hard
+
 "@react-native-async-storage/async-storage@npm:^1.15.5":
   version: 1.18.1
   resolution: "@react-native-async-storage/async-storage@npm:1.18.1"
@@ -6840,10 +6858,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "app@workspace:packages/app"
   dependencies:
+    "@atiladev/usecalendar": ^0.3.3
     "@config-plugins/react-native-webrtc": ^6.0.0
     "@huddle01/react": ^0.0.11
     "@my/ui": "*"
     "@polybase/client": ^0.6.1
+    "@react-native-async-storage/async-storage": 1.17.11
     "@react-native-community/datetimepicker": 6.7.3
     "@tamagui/animations-react-native": latest
     "@tamagui/colors": latest
@@ -6857,9 +6877,11 @@ __metadata:
     burnt: ^0.10.0
     date-fns: ^2.30.0
     ethers: 5.7.1
+    expo-calendar: ~11.1.1
     expo-constants: ^14.2.1
     expo-image-picker: ~14.1.1
     expo-linking: ^4.0.1
+    expo-localization: ~14.1.1
     react-hook-form: ^7.44.3
     react-native-webrtc: ^111.0.1
     slugify: ^1.6.6
@@ -10904,6 +10926,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-calendar@npm:~11.1.1":
+  version: 11.1.1
+  resolution: "expo-calendar@npm:11.1.1"
+  peerDependencies:
+    expo: "*"
+  checksum: e56d75dedc317fcbcaf1e41b69ab100fa869d0b480705c9f90cb1a3f9b6a0d26be2525ca4955fc443447355dba8d92e9abce119940955e726c13356c7f44b961
+  languageName: node
+  linkType: hard
+
 "expo-constants@npm:^14.2.1, expo-constants@npm:~14.2.0, expo-constants@npm:~14.2.1":
   version: 14.2.1
   resolution: "expo-constants@npm:14.2.1"
@@ -11064,6 +11095,17 @@ __metadata:
     qs: ^6.11.0
     url-parse: ^1.5.9
   checksum: 631656c9cad78c345b35b7decd8c2bc22014b867321fcbb0c740b15001a492080ee3be26d27a89587eb2736223c82a39c600950930cf44b6dd95d37acb7e1527
+  languageName: node
+  linkType: hard
+
+"expo-localization@npm:~14.1.1":
+  version: 14.1.1
+  resolution: "expo-localization@npm:14.1.1"
+  dependencies:
+    rtl-detect: ^1.0.2
+  peerDependencies:
+    expo: "*"
+  checksum: c449a590ff20ec49b21bcbdef3c4dc1566945cd82341662ff48d098f37cf943a1bc8af614a74dd306abe5b076e99488a1e296e64ba246fdf3257fc47e71fa7ae
   languageName: node
   linkType: hard
 
@@ -18615,6 +18657,13 @@ __metadata:
   bin:
     rollup: dist/bin/rollup
   checksum: f3294d712147c0975c59ff81b3010dc08d07743cdad72fbe12879044b3e467139b3c2aeec85768656c4f7ec6a7b3d19354a78fc2050044bf8e90a499e145e31e
+  languageName: node
+  linkType: hard
+
+"rtl-detect@npm:^1.0.2":
+  version: 1.0.4
+  resolution: "rtl-detect@npm:1.0.4"
+  checksum: d562535baa0db62f57f0a1d4676297bff72fd6b94e88f0f0900d5c3e810ab512c5c4cadffd3e05fbe8d9c74310c919afa3ea8c1001c244e5555e8eef12d02d6f
   languageName: node
   linkType: hard
 

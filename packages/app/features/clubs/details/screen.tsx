@@ -400,14 +400,28 @@ export function ClubDetailScreen() {
                 </Tabs.List>
                 <Separator vertical />
                 <TabsContent value="tab1">
-                  <Paragraph>
-                    <Discussions idClub={id} />
-                  </Paragraph>
+                  <Discussions
+                    club={queryClub?.data}
+                    material={querySourceMaterial?.data as RatedSourceMaterial}
+                    milestones={queryClubMaterialDetails?.data?.milestones}
+                    canAccessEvents={
+                      (userInfo?.publicAddress &&
+                        moderator?.queryUserProfile?.data?.id &&
+                        moderator?.queryUserProfile?.data?.id === userInfo?.publicAddress) ||
+                      queryIsCurrentUserMember?.data?.data?.id
+                    }
+                  />
                 </TabsContent>
                 <TabsContent value="tab2">
                   <Schedule
                     material={querySourceMaterial?.data as RatedSourceMaterial}
                     milestones={queryClubMaterialDetails?.data?.milestones}
+                    canAccessEvents={
+                      (userInfo?.publicAddress &&
+                        moderator?.queryUserProfile?.data?.id &&
+                        moderator?.queryUserProfile?.data?.id === userInfo?.publicAddress) ||
+                      queryIsCurrentUserMember?.data?.data?.id
+                    }
                   />
                 </TabsContent>
               </Tabs>

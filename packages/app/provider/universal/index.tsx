@@ -9,12 +9,7 @@ export function Provider({ children, ...rest }: Omit<TamaguiProviderProps, 'conf
   const scheme = useColorScheme()
   return (
     <QueryClientProvider client={queryClient}>
-      <TamaguiProvider
-        config={config}
-        disableInjectCSS
-        defaultTheme={scheme === 'dark' ? 'dark' : 'light'}
-        {...rest}
-      >
+      <TamaguiProvider config={config} disableInjectCSS defaultTheme="light" {...rest}>
         <ToastProvider
           swipeDirection="horizontal"
           duration={6000}
