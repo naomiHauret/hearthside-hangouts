@@ -264,7 +264,8 @@ collection RSVP {
       this.id = id;
       this.profile = profile;
       this.idEvent = idEvent;
-  }  
+  }
+  @call(profile)
   del () {
   if (ctx.publickKey != this.profile.publicKey) {
       throw error();
