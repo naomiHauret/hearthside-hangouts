@@ -222,32 +222,56 @@ collection UserProfile {
   }
 }
 
-// Discussion
-// Discussions can happen in the club lobby, chapter rooms or review rooms
+// Post
+// Post can be sent to different channels ; posts have content ; posts can receive responses ;
 @public
-collection ClubDiscussion {
+collection ClubPost {
     id: string;
+    idChannel: string;
     club: Club;
-    messages: string[];
-    clubMaterial?: ClubMaterial;
+    proofOfMembership: ClubMembership;
+    content: string;
+    reactions: map<PublicKey, number>;  
+    parentPost?: ClubPost;
+    creator: UserProfile;
   
     @index(club);
-    @index(clubMaterial);
+    @index(idChannel);
+    @index(parentPost);
 
-    constructor (id: string, club: Club, clubMaterial?: ClubMaterial) {
+    constructor (id: string, idChannel: string, club: Club, proofOfMembership: ClubMembership, creator: UserProfile, content: string,  parentPost?: ClubPost) {
+      if (proofOfMembership.memberPublicKey != ctx.publicKey || proofOfMembership.club.id != this.club.id) {
+        error('Only club members can post.');
+      }
+      if (creator.publicKey != ctx.publicKey) {
+        error('Cant post on behalf of another account.');
+      }
+
       this.id = id;
+      this.idChannel = idChannel;
       this.club = club;
-      this.messages = messages;
-      this.clubMaterial = ClubMaterial;
+      this.proofOfMembership = proofOfMembership;
+      this.content = content;
+      this.reactions = {};
+      this.parentPost = parentPost;
+      this.creator = UserProfile;
     }
   
-  function postMessage(message: string, proofOfMembership: ClubMembership) {
+  function react(reaction: string, proofOfMembership: ClubMembership) {
     // Verify that the current user isn't impersonating another user and is a member of the club
     if (proofOfMembership.memberPublicKey != ctx.publicKey || proofOfMembership.club.id != this.club.id) {
-        error('Only the club members can post messages.');
+        error('Only club react.');
       }
-      this.messages.push(messages);
+      this.reactions[ctx.publicKey] = reaction;
     }
+
+  del () {
+    if (ctx.publickKey != this.club.creator.publicKey || ctx.publicKey != this.creator.publicKey) {
+      throw error();
+    }
+    selfdestruct();
+  }
+
 }
 
 // Store the events for which the user RSVPed
@@ -278,6 +302,9 @@ collection RSVP {
   we don't use those
 */
 
+collection ClubDiscussion {
+  id: string;
+}
 collection City {
   id: string;
 }
@@ -290,5 +317,6 @@ collection Milestone {
 collection Milestones {
   id: string;
 }
+
 
 `
