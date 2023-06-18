@@ -10,21 +10,25 @@ import { useCurrentUser } from 'app/hooks'
  */
 export function SignInScreen() {
   const { push } = useRouter()
-  const {  userInfo } = useCurrentUser()
+  const { userInfo } = useCurrentUser()
 
   useEffect(() => {
-    if(userInfo?.publicAddress) {
+    if (userInfo?.publicAddress) {
       push('/')
     }
   }, [userInfo?.publicAddress])
 
   return (
-    <YStack flexGrow={1} jc="center" ai="center"  px="$4" space>
+    <YStack flexGrow={1} jc="center" ai="center" px="$4" space>
       <YStack space="$2">
         <YStack space="$1">
-          <H2 pt="$8" ta="center">🏕️</H2>
+          <H2 pt="$8" ta="center">
+            🏕️
+          </H2>
 
-          <H1 size="$6" fontFamily="$body" fontWeight="bold" ta="center">Your cozy bookish banters awaits.</H1>
+          <H1 size="$6" fontFamily="$body" fontWeight="bold" ta="center">
+            Your cozy bookish banters awaits.
+          </H1>
         </YStack>
         <Paragraph ta="center">
           Sign-in to join book clubs and connect with fellow readers on Hearthside Hangouts !

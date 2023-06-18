@@ -83,6 +83,7 @@ export const PostsScreen = (props: PostsScreenProps) => {
       <YStack pb="$6">
         <YGroup bordered separator={<Separator />}>
           <ClubPostsChannel
+            canAccess={canAccessEvents}
             idClubMaterial={idClubMaterial}
             id={`${idClubMaterial}/hangout`}
             title="Club hangout"
@@ -100,7 +101,8 @@ export const PostsScreen = (props: PostsScreenProps) => {
         {milestones?.map((milestone: Milestone) => {
           return (
             <ClubPostsChannel
-              id={`thread-posts-${milestone.id}`}
+              key={`thread-posts-${milestone.id}`}
+              canAccess={canAccessEvents}
               idClubMaterial={idClubMaterial}
               id={`${idClubMaterial}/${milestone.id}`}
               title={milestone.title}
@@ -112,6 +114,7 @@ export const PostsScreen = (props: PostsScreenProps) => {
       <YStack mt="$6">
         <YGroup bordered separator={<Separator />}>
           <ClubPostsChannel
+            canAccess={canAccessEvents}
             idClubMaterial={idClubMaterial}
             id={`${idClubMaterial}/reviews`}
             title="Reviews"

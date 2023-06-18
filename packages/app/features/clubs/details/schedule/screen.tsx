@@ -1,8 +1,8 @@
 import { formatRelative, fromUnixTime, isFuture } from 'date-fns'
 import type { RatedSourceMaterial, Milestone } from '../../../../hooks'
-import { YGroup, ListItem, SizableText, Paragraph, Separator } from '@my/ui'
+import { YGroup, YStack, ListItem, SizableText, Paragraph, Separator } from '@my/ui'
 import RSVPButton from './RSVPButton'
-
+import React from 'react'
 interface ScheduleProps {
   material: RatedSourceMaterial | undefined
   milestones: Milestone[] | undefined
@@ -17,12 +17,12 @@ export const Schedule = (props: ScheduleProps) => {
         return (
           <YGroup.Item key={`detailed-schedule-${milestone.id}`}>
             <ListItem
-              opacity={isFuture(fromUnixTime(milestone.startAt)) ? 1 : 0.5}
               hoverTheme
               title={<SizableText fontWeight="bold">{milestone.title}</SizableText>}
               subTitle={
                 <SizableText theme="alt1" size="$2">
-                  {formatRelative(fromUnixTime(milestone.startAt), new Date())}
+                  {milestone?.startAt &&
+                    formatRelative(fromUnixTime(parseInt(milestone?.startAt)), new Date())}
                 </SizableText>
               }
             >
@@ -31,9 +31,13 @@ export const Schedule = (props: ScheduleProps) => {
                   {milestone.notes}
                 </Paragraph>
               )}
-              {isFuture(fromUnixTime(milestone.startAt)) && canAccessEvents && (
-                <RSVPButton club={club} material={material} milestone={milestone} />
-              )}
+              {milestone?.startAt &&
+                isFuture(fromUnixTime(milestone.startAt)) &&
+                canAccessEvents && (
+                  <YStack>
+                    <RSVPButton club={club} material={material} milestone={milestone} />
+                  </YStack>
+                )}
             </ListItem>
           </YGroup.Item>
         )

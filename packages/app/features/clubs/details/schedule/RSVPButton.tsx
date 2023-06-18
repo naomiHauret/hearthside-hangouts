@@ -4,7 +4,7 @@ import { Button, Spinner, YStack } from '@my/ui'
 import { useMutation } from '@tanstack/react-query'
 import { addHours, fromUnixTime } from 'date-fns'
 import * as Calendar from 'expo-calendar'
-import { useRSVP } from '../../../../hooks'
+import { useRSVP } from 'app/hooks/rsvp'
 
 interface RSVPButtonProps {
   milestone: Milestone
