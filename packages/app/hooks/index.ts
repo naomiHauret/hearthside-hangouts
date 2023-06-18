@@ -1,4 +1,5 @@
 export * from './clubs'
+export * from './club-posts'
 export * from './club-material'
 export * from './current-user'
 export * from './filepicker-image'

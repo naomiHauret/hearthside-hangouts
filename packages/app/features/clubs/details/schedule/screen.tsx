@@ -17,6 +17,7 @@ export const Schedule = (props: ScheduleProps) => {
         return (
           <YGroup.Item key={`detailed-schedule-${milestone.id}`}>
             <ListItem
+              opacity={isFuture(fromUnixTime(milestone.startAt)) ? 1 : 0.5}
               hoverTheme
               title={<SizableText fontWeight="bold">{milestone.title}</SizableText>}
               subTitle={

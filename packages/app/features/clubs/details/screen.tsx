@@ -38,7 +38,7 @@ import SheetUpdateDetails from './SheetUpdateDetails'
 import FormClub from '../Form'
 import SelectMaterial from './SelectMaterial'
 import TabsContent from './TabContent'
-import Discussions from './discussions/screen'
+import Posts from './posts/screen'
 import Schedule from './schedule/screen'
 import EditSchedule from './schedule/edit/screen'
 import { ProviderEditSchedule } from './schedule/edit/Provider'
@@ -400,8 +400,9 @@ export function ClubDetailScreen() {
                 </Tabs.List>
                 <Separator vertical />
                 <TabsContent value="tab1">
-                  <Discussions
+                  <Posts
                     club={queryClub?.data}
+                    idClubMaterial={queryClubMaterialDetails?.data?.id}
                     material={querySourceMaterial?.data as RatedSourceMaterial}
                     milestones={queryClubMaterialDetails?.data?.milestones}
                     canAccessEvents={

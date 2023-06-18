@@ -29,30 +29,23 @@ export const CardClub = (props: CardClubProps) => {
   })
   const { queryClubMembers } = useClubs(club.id)
   const { queryClubMaterialDetails } = useClubMaterial({
-    shouldFetchClubMaterial: true,
+    shouldFetchClubMaterial:
+      club?.currentClubMaterial === '' ||
+      !club?.currentClubMaterial ||
+      club?.currentClubMaterial === null
+        ? false
+        : true,
     idClubMaterial: club?.currentClubMaterial as string,
   })
 
   const { querySourceMaterial } = useSourceMaterial({
     id: queryClubMaterialDetails?.data?.material?.id as string,
-    shouldFetchMaterial: true,
+    shouldFetchMaterial: queryClubMaterialDetails?.data?.material?.id ? true : false,
   })
 
   const linkClub = useLink({
     href: `/clubs/${club.id}`,
   })
-
-  if (
-    queryUserProfile?.isLoading ||
-    queryClubMembers?.isLoading ||
-    queryClubMaterialDetails?.isLoading ||
-    querySourceMaterial?.isLoading
-  )
-    return (
-      <Card minHeight={400} elevate size="$4" bordered {...linkClub}>
-        <YStack m="$2" borderRadius="$2" height={200} bg="$color6" />
-      </Card>
-    )
 
   return (
     <Card elevate size="$4" bordered {...linkClub}>

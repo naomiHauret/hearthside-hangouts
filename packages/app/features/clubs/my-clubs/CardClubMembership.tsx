@@ -29,20 +29,6 @@ export const CardClubMembership = (props: CardClubMembershipProps) => {
     href: `/clubs/${idClub}`,
   })
 
-  if (
-    queryUserProfile.isLoading ||
-    queryClub?.isLoading ||
-    querySourceMaterial?.isLoading ||
-    queryClubMaterialDetails?.isLoading
-  )
-    return (
-      <Card position="relative" bordered elevate size="$4">
-        <Card.Header flexDirection="row" ai="center" padded>
-          <YStack overflow="hidden" borderRadius="$2" width={80} bg="$color6" height={120} />
-        </Card.Header>
-      </Card>
-    )
-
   return (
     <Card position="relative" elevate size="$4" bordered {...linkClub}>
       <Card.Header flexDirection="row" ai="center" padded>

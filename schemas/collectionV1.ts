@@ -115,7 +115,7 @@ collection UserProfile {
     creatorPublicKey: PublicKey;
     coverURI: string;
     openToNewMembers: boolean;
-    currentMaterial: ClubMaterial;
+    currentClubMaterial: string;
 
     @index(creator);
     @index(name);
@@ -143,12 +143,12 @@ collection UserProfile {
       this.openToNewMembers = openToNewMembers;
     }
 
-    function setCurrentMaterial (clubMaterial: ClubMaterial) {
+    function setCurrentMaterial (currentClubMaterial: string) {
       // Check if the caller is the original creator of the record.
       if (ctx.publicKey != this.creatorPublicKey) {
         error('Only the club creator can update the current material.');
       }
-      this.currentMaterial = clubMaterial;
+      this.currentClubMaterial = currentClubMaterial;
     }
 
     del () {
@@ -229,39 +229,61 @@ collection ClubPost {
     id: string;
     idChannel: string;
     club: Club;
-    proofOfMembership: ClubMembership;
+    proofOfMembership?: ClubMembership;
     content: string;
     reactions: map<PublicKey, number>;  
     parentPost?: ClubPost;
     creator: UserProfile;
+    createdAt: number;
   
     @index(club);
     @index(idChannel);
     @index(parentPost);
 
-    constructor (id: string, idChannel: string, club: Club, proofOfMembership: ClubMembership, creator: UserProfile, content: string,  parentPost?: ClubPost) {
-      if (proofOfMembership.memberPublicKey != ctx.publicKey || proofOfMembership.club.id != this.club.id) {
+    constructor (id: string, idChannel: string, club: Club, creator: UserProfile, content: string, createdAt: number, proofOfMembership?: ClubMembership,  parentPost?: ClubPost) {
+      if (ctx.publicKey != creator.publicKey) {
         error('Only club members can post.');
       }
-      if (creator.publicKey != ctx.publicKey) {
-        error('Cant post on behalf of another account.');
-      }
 
-      this.id = id;
-      this.idChannel = idChannel;
-      this.club = club;
-      this.proofOfMembership = proofOfMembership;
-      this.content = content;
-      this.reactions = {};
-      this.parentPost = parentPost;
-      this.creator = UserProfile;
+      if(creator.publicKey == club.creatorPublicKey) {
+                this.id = id;
+        this.idChannel = idChannel;
+        this.club = club;
+        this.content = content;
+        this.reactions = {};
+        this.parentPost = parentPost;
+        this.creator = creator;
+        this.createdAt = createdAt;
+
+      } 
+      
+      if(creator.publicKey != club.creatorPublicKey){
+       if (proofOfMembership.memberPublicKey != ctx.publicKey && proofOfMembership.club.id != club.id) {
+          error('Only club members can post.');
+        }
+        this.id = id;
+        this.idChannel = idChannel;
+        this.club = club;
+        this.content = content;
+        this.reactions = {};
+        this.parentPost = parentPost;
+        this.creator = creator;
+        this.createdAt = createdAt;
+        this.proofOfMembership = proofOfMembership;
+      }
     }
   
-  function react(reaction: string, proofOfMembership: ClubMembership) {
+  function react(reaction: string, proofOfMembership?: ClubMembership) {
     // Verify that the current user isn't impersonating another user and is a member of the club
-    if (proofOfMembership.memberPublicKey != ctx.publicKey || proofOfMembership.club.id != this.club.id) {
-        error('Only club react.');
+          if(proofOfMembership.memberPublicKey) {
+        if (proofOfMembership.memberPublicKey != ctx.publicKey && proofOfMembership.club.id != club.id) {
+          error('Only club members can react to posts.');
+        }
       }
+      if (ctx.publicKey != creator.publicKey) {
+        error('Only club members can react to posts.');
+      }
+
       this.reactions[ctx.publicKey] = reaction;
     }
 
@@ -317,6 +339,5 @@ collection Milestone {
 collection Milestones {
   id: string;
 }
-
 
 `

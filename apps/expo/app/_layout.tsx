@@ -4,6 +4,7 @@ import {
   ProviderMagicWallet,
   ProviderPolybase,
   ProviderIPFS,
+  ProviderClubPosts,
 } from 'app/provider'
 import { ProviderBooksApi } from 'app/provider/books/index'
 import { getWalletClient } from 'app/helpers'
@@ -36,22 +37,24 @@ export default function HomeLayout() {
     <ProviderBooksApi googleBooksApiAccessToken={getGoogleBooksKey()}>
       <ProviderIPFS web3StorageAccessToken={getIpfsClient()}>
         <ProviderPolybase defaultNamespace={POLYBASE_DEFAULT_NAMESPACE} db={defaultPolybaseDb}>
-          <SafeAreaProvider>
-            <magic.Relayer />
-            {/** @ts-ignore */}
-            <ProviderMagicWallet
-              redirectURI="exp://qyaqb1c.naomihauret.19000.exp.direct"
-              walletClient={walletClient}
-              // @ts-ignore
-              magic={magic}
-            >
-              <ProviderUniversalUI>
-                <ThemeProvider value={scheme === 'dark' ? DarkTheme : DefaultTheme}>
-                  <RootLevelNavigator />
-                </ThemeProvider>
-              </ProviderUniversalUI>
-            </ProviderMagicWallet>
-          </SafeAreaProvider>
+          <ProviderClubPosts selectedChannel={undefined} isSheetOpen={false}>
+            <SafeAreaProvider>
+              <magic.Relayer />
+              {/** @ts-ignore */}
+              <ProviderMagicWallet
+                redirectURI="exp://qyaqb1c.naomihauret.19000.exp.direct"
+                walletClient={walletClient}
+                // @ts-ignore
+                magic={magic}
+              >
+                <ProviderUniversalUI>
+                  <ThemeProvider value={scheme === 'dark' ? DarkTheme : DefaultTheme}>
+                    <RootLevelNavigator />
+                  </ThemeProvider>
+                </ProviderUniversalUI>
+              </ProviderMagicWallet>
+            </SafeAreaProvider>
+          </ProviderClubPosts>
         </ProviderPolybase>
       </ProviderIPFS>
     </ProviderBooksApi>

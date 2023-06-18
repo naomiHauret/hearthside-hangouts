@@ -104,6 +104,11 @@ export function useClubMaterial(args: {
         polybaseDb.collection('Club').record(values.idClub),
         Date.now(),
       ])
+    },
+    {
+      onSuccess(data, variables) {
+        queryClient.invalidateQueries(['club', variables?.idClub])
+      },
     }
   )
 
@@ -134,6 +139,11 @@ export function useClubMaterial(args: {
       await collectionReference
         .record(values?.idClubMaterial as string)
         .call('setMilestones', [values.milestones])
+    },
+    {
+      onSuccess(data, variables) {
+        queryClient.invalidateQueries(['club-material', variables?.idClubMaterial])
+      },
     }
   )
 
