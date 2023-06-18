@@ -115,7 +115,7 @@ collection UserProfile {
     creatorPublicKey: PublicKey;
     coverURI: string;
     openToNewMembers: boolean;
-    currentClubMaterial: string;
+    currentClubMaterial?: string;
 
     @index(creator);
     @index(name);
